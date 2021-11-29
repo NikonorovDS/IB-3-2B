@@ -1,0 +1,53 @@
+from datetime import datetime
+from typing import Optional
+from pydantic import BaseModel
+import base64
+
+
+class UserBase(BaseModel):
+   # id: int
+    email: str 
+    phone: str
+    role: str 
+    name: str 
+    admission_year: str  
+    course: Optional[int] 
+    direction: Optional[str] 
+    group: Optional[str]
+    hostel: Optional[str] 
+    password: Optional[str] 
+    
+    
+class UserCreate(UserBase):
+   # id: int
+    email: str 
+    phone: str
+    role: str 
+    name: str 
+    admission_year: str 
+    course: Optional[int] 
+    direction: Optional[str] 
+    group: Optional[str]
+    hostel: Optional[str] 
+    password: Optional[str] 
+class UserUpdate(UserBase):
+    pass
+
+#DATABASE BASE
+class User(UserBase):
+    #id: int
+    email: str 
+    phone: str
+    role: str 
+    name: str 
+    admission_year: str 
+    course: Optional[int] 
+    direction: Optional[str] 
+    group: Optional[str]
+    hostel: Optional[str] 
+    password: Optional[str] 
+   
+    class Config:
+        orm_mode = True
+
+
