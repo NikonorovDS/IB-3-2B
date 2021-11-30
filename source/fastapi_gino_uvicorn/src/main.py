@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI,Request
 from custom_logging import CustomizeLogger
 from core.config import settings
 from fastapi.staticfiles import StaticFiles
@@ -24,3 +24,6 @@ from api.api_v1.api import usersRouter, pagesRouter
 app.include_router(usersRouter, prefix=settings.API_VERSION_STR, tags=['Users'])
 
 app.include_router(pagesRouter, prefix=settings.API_VERSION_STR, tags=['Pages'])
+
+app.include_router(pagesRouter, prefix=settings.API_VERSION_STR, tags=['Dialogs'])
+

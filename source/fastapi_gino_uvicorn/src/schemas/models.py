@@ -3,6 +3,12 @@ from typing import Optional
 from pydantic import BaseModel
 import base64
 
+from pydantic.types import ByteSize
+
+
+
+
+
 
 class UserBase(BaseModel):
    # id: int
@@ -50,4 +56,16 @@ class User(UserBase):
     class Config:
         orm_mode = True
 
+class UserLogin(BaseModel):
+    email: str
+    password: str
 
+class MessageBase(BaseModel):
+    sender_1: int
+    sender_2: int
+    Messages: dict
+
+class Message(MessageBase):
+    sender_1: int
+    sender_2: int
+    Messages: dict

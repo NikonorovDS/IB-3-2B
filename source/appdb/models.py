@@ -21,6 +21,7 @@ except:
 class User(db.Model) :
     __tablename__ = 'users'
     id: int = db.Column(db.Integer, primary_key=True ,autoincrement=True) 
+    login: str = db.Column(db.String,default='-')
     email: str = db.Column(db.String,default='-')
     phone: str = db.Column(db.String,default='-')
     role: str = db.Column(db.String,default='-')
@@ -37,15 +38,22 @@ class User(db.Model) :
         user = await cls.create(email=email,phone=phone,role=role,name=name, 
         admission_year=admission_year, course=course,direction=direction,group=group
         ,hostel=hostel,password=str(hash_password.hexdigest()))
+    @classmethod
+    async def check_password(cls,email,password)-> "User":
+        pass_user = await User.query.where(User.email==email).gino.first()
+        pass_user = pass_user.password 
+        if pass_user == password:
+            return True
+        else:
+            return False
         
 class Messages(db.Model): 
     __tablename__ = 'messages'
     id:  int = db.Column(db.Integer, primary_key=True ,autoincrement=True)
     sender_1: int =  db.Column(db.Integer,default='-')
     sender_2: int =  db.Column(db.Integer,default='-')
-    messages: db.Column(JSON, nullable=False, server_default="{}")
-    sender = db.StringProperty(prop_name="messages")
-    message = db.StringProperty(prop_name="messages")
+    dialog: db.Column(JSON, nullable=False, server_default="{}")
+    
     @classmethod
     async def get_or_create(cls,sender_1,sender_2)-> "Messages":
         dialog = await Messages.query.where(Messages.sender_1 == sender_1 and Messages.sender_2==sender_2).gino.first()
@@ -60,4 +68,25 @@ class Messages(db.Model):
         new_message = new_message.json()
         new_message.append(messages)
         dialog.update(messages=new_message)
-        return new
+        return new_message
+
+
+class Cookies(db.Model): 
+    __tablename__ = 'cookies'
+    userId: int = db.Column(db.Integer, primary_key=True)
+    value: int =  db.Column(db.Integer,default='-')
+    date = db.Column(db.DateTime())
+    @classmethod
+    async def get_or_create(cls,userId,value)-> "Cookies":
+        cookie_token = cls.get(userId)
+        if cookie_token is None:
+            date = datetime.now()
+            cls.create(userId=userId,value=value,date=date)
+        else:
+            date = datetime.now()
+            date_cookies = cookie_token.date
+            period = date - date_cookies
+            if period.days > 7:
+                return "Token is no valid"
+            else:
+                return cls.get(userId)

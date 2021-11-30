@@ -1,12 +1,13 @@
 from typing import Any, List
 from fastapi import APIRouter
 from fastapi import Request
-from schemas.models import User, UserCreate, UserUpdate
+from schemas.models import User, UserCreate, UserUpdate, UserLogin
 from models.models import User as ORMUser
+from models.models import Cookies as ORMCookies 
 from gino import Gino
 import os
 db = Gino()
-
+from uuid import uuid4
 
 
 router = APIRouter()
@@ -22,6 +23,23 @@ async def read_users(
     users = await ORMUser.query.gino.all()
     return users
 
+@router.post('/login')
+async def login(request : UserLogin,response = Request) -> Any: 
+    check : ORMUser = await ORMUser.check_password(**request.dict())
+    username = request.dict()
+    username = username["email"]
+    if check is True:
+        value = str(uuid4()).replace('-', '')
+        response = {"message":"Yesssss"}
+        add_cookies : ORMCookies(userId=username,value=value)
+        response.set_cookie(key=username,value=value)
+        
+        return response
+    else:
+        return {'message':"password is not valid"}
+        
+
+    
 
 @router.post('/')
 async def create_user(
