@@ -2,8 +2,10 @@ from typing import Any, List
 from fastapi import APIRouter
 from fastapi.param_functions import Query
 from fastapi.responses import JSONResponse
-from fastapi import Request,Response,Cookie
+from fastapi import Request,Response,Cookie,Form
 from typing import Optional
+
+from starlette.responses import HTMLResponse
 from schemas.models import User, UserCreate, UserUpdate, UserLogin
 from models.models import User as ORMUser
 from models.models import Cookies as ORMCookies 
@@ -25,12 +27,30 @@ async def read_users(
     """
     users = await ORMUser.query.gino.all()
     return users
-
+@router.get('/start',response_class=HTMLResponse)
+async def start():
+    html_content = f"""
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="utf-8">
+  <title>Форма</title>
+ </head>
+ <body>
+  <form id="auth" action="http://localhost:80/v1/users/login" method="post"></form>
+  <p>...</p>
+  <p><input name="email" form="auth">
+  <input type="password" name="password" form="auth"></p>
+  <p><input type="submit" form="auth"></p> 
+ </body>
+</html>
+"""
+    return html_content
 @router.post('/login')
-async def login(request : UserLogin,response: Request) -> Any: 
-    check : ORMUser = await ORMUser.check_password(**request.dict())
-    username = request.dict()
-    username = username["email"]
+async def login(email = Form(...),password = Form(...) ,response=Request) -> Any: 
+    #request.json()
+    check : ORMUser = await ORMUser.check_password(email,password)
+    username = email
     if check is True:
         content = {"message": "Come to the dark side, we have cookies"}
         value = str(uuid4()).replace('-', '')

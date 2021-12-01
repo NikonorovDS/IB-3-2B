@@ -73,20 +73,22 @@ class Messages(db.Model):
 
 class Cookies(db.Model): 
     __tablename__ = 'cookies'
-    userId: int = db.Column(db.Integer, primary_key=True)
-    value: int =  db.Column(db.Integer,default='-')
+    value: str =  db.Column(db.String,primary_key=True)
+    userId: str = db.Column(db.String, default=0)
+   
     date = db.Column(db.DateTime())
     @classmethod
     async def get_or_create(cls,userId,value)-> "Cookies":
-        cookie_token = cls.get(userId)
+        cookie_token = cls.get(value)
         if cookie_token is None:
             date = datetime.now()
-            cls.create(userId=userId,value=value,date=date)
+            cls.create(value=value,userId=userId,date=date)
         else:
             date = datetime.now()
             date_cookies = cookie_token.date
             period = date - date_cookies
-            if period.days > 7:
+            if int(period.days) > 7:
                 return "Token is no valid"
             else:
-                return cls.get(userId)
+                return cls.get(value)
+        
