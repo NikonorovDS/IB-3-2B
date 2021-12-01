@@ -1,7 +1,9 @@
 from typing import Any, List
 from fastapi import APIRouter
+from fastapi.param_functions import Query
 from fastapi.responses import JSONResponse
-from fastapi import Request,Response
+from fastapi import Request,Response,Cookie
+from typing import Optional
 from schemas.models import User, UserCreate, UserUpdate, UserLogin
 from models.models import User as ORMUser
 from models.models import Cookies as ORMCookies 
@@ -31,8 +33,10 @@ async def login(request : UserLogin,response: Request) -> Any:
     username = username["email"]
     if check is True:
         content = {"message": "Come to the dark side, we have cookies"}
+        value = str(uuid4()).replace('-', '')
         response = JSONResponse(content=content)
-        response.set_cookie(key="fakesession", value="fake-cookie-session-value")
+        add_cookies : ORMCookies(userId=username,value=value)
+        response.set_cookie(key="CookieId", value=value)
         return response
     else:
         return {'message':"password is not valid"}
@@ -45,13 +49,16 @@ async def test_login(username: str,password:str ,response: Request)-> Any:
         content= 'yess'
         response = JSONResponse(content=content)
         add_cookies : ORMCookies(userId=username,value=value)
-        response.set_cookie(key=username,value=value)
+        response.set_cookie(key="CookieId",value=value)
         
         return response
     else:
         return {'message':"password is not valid"}
     
-
+@router.get('/test_working')
+async def read_cookies(email: Optional[str] = Cookie(None)) -> Any:
+    return {"CookieId": email}
+   
 @router.post('/')
 async def create_user(
     request : UserCreate
