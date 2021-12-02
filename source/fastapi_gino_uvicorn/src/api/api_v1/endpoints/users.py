@@ -1,9 +1,10 @@
 from typing import Any, List
 from fastapi import APIRouter
 from fastapi.param_functions import Query
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse,RedirectResponse
 from fastapi import Request,Response,Cookie,Form
 from typing import Optional
+import starlette.status as status
 
 from starlette.responses import HTMLResponse
 from schemas.models import User, UserCreate, UserUpdate, UserLogin
@@ -13,7 +14,7 @@ from gino import Gino
 import os
 db = Gino()
 from uuid import uuid4
-
+import requests
 
 router = APIRouter()
 
@@ -29,6 +30,7 @@ async def read_users(
     return users
 @router.get('/start',response_class=HTMLResponse)
 async def start():
+    
     html_content = f"""
 <!DOCTYPE html>
 <html>
@@ -47,19 +49,23 @@ async def start():
 """
     return html_content
 @router.post('/login')
-async def login(email = Form(...),password = Form(...) ,response=Request) -> Any: 
+async def login(email = Form(...),password = Form(...) ,response=Request,CookieId: Optional[str] = Cookie(None)) -> Any: 
     #request.json()
-    check : ORMUser = await ORMUser.check_password(email,password)
-    username = email
-    if check is True:
-        content = {"message": "Come to the dark side, we have cookies"}
-        value = str(uuid4()).replace('-', '')
-        response = JSONResponse(content=content)
-        add_cookies : ORMCookies(userId=username,value=value)
-        response.set_cookie(key="CookieId", value=value)
-        return response
-    else:
-        return {'message':"password is not valid"}
+    if CookieId is None: 
+        check : ORMUser = await ORMUser.check_password(email,password)
+        username = email
+        if check is True:
+            content = {"message": "Come to the dark side, we have cookies"}
+            value = str(uuid4()).replace('-', '')
+            response = JSONResponse(content=content)
+            add_cookies : ORMCookies(userId=username,value=value)
+            response.set_cookie(key="CookieId", value=value)
+            return response
+        else:
+            return RedirectResponse(
+            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+    if CookieId is not None:
+        return {'mesage':'you alredy have Cookies'}
         
 @router.get('/login_test/{username}')
 async def test_login(username: str,password:str ,response: Request)-> Any: 
@@ -73,11 +79,11 @@ async def test_login(username: str,password:str ,response: Request)-> Any:
         
         return response
     else:
-        return {'message':"password is not valid"}
+        return requests.get("http://localhost:80/v1/users/start") #{'message':"password is not valid"}
     
 @router.get('/test_working')
-async def read_cookies(email: Optional[str] = Cookie(None)) -> Any:
-    return {"CookieId": email}
+async def read_cookies(CookieId: Optional[str] = Cookie(None)) -> Any:
+    return {"CookieId": CookieId}
    
 @router.post('/')
 async def create_user(

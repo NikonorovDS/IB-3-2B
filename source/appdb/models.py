@@ -41,10 +41,13 @@ class User(db.Model) :
     @classmethod
     async def check_password(cls,email,password)-> "User":
         pass_user = await User.query.where(User.email==email).gino.first()
-        pass_user = pass_user.password 
-        if pass_user == password:
-            return True
-        else:
+        if pass_user is not None:
+            pass_user = pass_user.password 
+            if pass_user == password:
+                return True
+            else:
+                return False
+        else: 
             return False
         
 class Messages(db.Model): 
