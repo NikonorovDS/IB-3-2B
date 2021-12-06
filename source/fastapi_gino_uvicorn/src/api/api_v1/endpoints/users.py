@@ -44,7 +44,7 @@ async def read_users(
     users = await ORMUser.query.gino.all()
     return users
 @router.get('/start',response_class=HTMLResponse )
-async def start(request: Request,response = Response,CookieId: Optional[str] = Cookie(None))-> Any:
+async def start(request: Request,response: Response,CookieId: Optional[str] = Cookie(None))-> Any:
     check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
     print(check)
     if check == 504:
@@ -91,6 +91,7 @@ async def login(email = Form(...),password = Form(...),CookieId: Optional[str] =
         if check == 504:
             return RedirectResponse(
             'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+        return{'meesage':'Your cookies is True'}
       
         
 @router.get('/login_test/{username}')

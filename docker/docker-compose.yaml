@@ -63,13 +63,11 @@ services:
         - PG_DB_NAME=${POSTGRES_DB}
         - PG_DB_PORT=${POSTGRES_PORT}
         - REDIS_PASSWD=${REDIS_PASSWORD}
-        - API_TOKEN=${TG_BOT_TOKEN}
     networks: 
       - custom_network_1
     depends_on:
       - db
-      - imagetagger
-      - redis
+     
 
 networks:
   custom_network_1:
