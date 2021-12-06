@@ -1,4 +1,5 @@
 from uuid import uuid4
+from fastapi.param_functions import Cookie
 #from pydantic.errors import NoneIsAllowedError
 from sqlalchemy.dialects.postgresql import JSON
 from datetime import datetime,timezone
@@ -82,16 +83,42 @@ class Cookies(db.Model):
     date = db.Column(db.DateTime())
     @classmethod
     async def get_or_create(cls,userId,value)-> "Cookies":
-        cookie_token = cls.get(value)
+        cookie_token = await cls.get(value)
         if cookie_token is None:
             date = datetime.now()
-            cls.create(value=value,userId=userId,date=date)
+            return await cls.create(value=value,userId=userId,date=date)
         else:
+            #print(cookie_token.__dict__)
+
+            datetimes = cookie_token.__dict__
+            datetimes = datetimes["__values__"]
+            datetimes = datetimes["date"]
+            print(datetimes)
+
             date = datetime.now()
-            date_cookies = cookie_token.date
+            # date_cookies = cookie_token.date
+            # period = date - date_cookies
+            # if int(period.days) > 7:
+            #     return "Token is no valid"
+            # else:
+            #     return cls.get(value)
+    @classmethod
+    async def get_cookie(cls,value) -> "Cookies":
+        await Cookies.delete_not_valid_token()
+        cookie_token = await cls.get(value)
+        if cookie_token is None:
+            return 504
+        else:
+            return cookie_token
+    @classmethod
+    async def delete_not_valid_token(cls) -> "Cookies":
+        cookies = await cls.query.gino.all()
+        print(cookies)
+        date = datetime.now()
+        for i in cookies:
+            date_cookies = i.date
+            print(date_cookies)
             period = date - date_cookies
             if int(period.days) > 7:
-                return "Token is no valid"
-            else:
-                return cls.get(value)
-        
+                await cls.delete.where(Cookies.value == i.value).gino.status()
+                

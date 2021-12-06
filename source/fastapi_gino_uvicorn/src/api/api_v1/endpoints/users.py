@@ -1,15 +1,21 @@
+import argparse
+import sys
+
+
+
 from typing import Any, List
 from fastapi import APIRouter
 from fastapi.param_functions import Query
 from fastapi.responses import JSONResponse,RedirectResponse
 from fastapi import Request,Response,Cookie,Form
 from typing import Optional
+from starlette import responses
 import starlette.status as status
 
 from starlette.responses import HTMLResponse
 from schemas.models import User, UserCreate, UserUpdate, UserLogin
 from models.models import User as ORMUser
-from models.models import Cookies as ORMCookies 
+from models.models import Cookies as ORMCookies  
 from gino import Gino
 import os
 db = Gino()
@@ -20,7 +26,13 @@ import requests
 from fastapi.templating import Jinja2Templates
 router = APIRouter()
 templates = Jinja2Templates(directory="./templates")
-
+@router.get("/cookies")
+async def read_cookies() -> Any:
+    cookies = await ORMCookies.query.gino.all()
+    return cookies
+@router.get("/cookies/delete")
+async def delete_cookies()  -> Any:
+    return await ORMCookies.delete_not_valid_token()
 @router.get('/', response_model=List[User])
 async def read_users(
     skip: int = 0,
@@ -32,7 +44,13 @@ async def read_users(
     users = await ORMUser.query.gino.all()
     return users
 @router.get('/start',response_class=HTMLResponse )
-async def start(request: Request)-> Any:
+async def start(request: Request,response = Response,CookieId: Optional[str] = Cookie(None))-> Any:
+    check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
+    print(check)
+    if check == 504:
+        response = templates.TemplateResponse('index.html',{"request":request})
+        response.delete_cookie("CookieId")
+        return response
     html_content = f"""
 <!DOCTYPE html>
 <html>
@@ -61,14 +79,19 @@ async def login(email = Form(...),password = Form(...),CookieId: Optional[str] =
             content = {"message": "Come to the dark side, we have cookies"}
             value = str(uuid4()).replace('-', '')
             response = JSONResponse(content=content)
-            add_cookies : ORMCookies(userId=username,value=value)
+            add_cookies : ORMCookies = await ORMCookies.get_or_create(userId=username,value=value)
+            print(add_cookies.__dict__)
             response.set_cookie(key="CookieId", value=value)
             return response
         else:
             return RedirectResponse(
             'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
-    if CookieId is not None:
-        return {'mesage':'you alredy have Cookies'}
+    elif CookieId is not None:
+        check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
+        if check == 504:
+            return RedirectResponse(
+            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+      
         
 @router.get('/login_test/{username}')
 async def test_login(username: str,password:str ,response: Request)-> Any: 
@@ -86,7 +109,12 @@ async def test_login(username: str,password:str ,response: Request)-> Any:
     
 @router.get('/test_working')
 async def read_cookies(CookieId: Optional[str] = Cookie(None)) -> Any:
-    return {"CookieId": CookieId}
+    check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
+    if check == 504:
+        return RedirectResponse(
+            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+    name = check.userId
+    return name
    
 @router.post('/')
 async def create_user(
