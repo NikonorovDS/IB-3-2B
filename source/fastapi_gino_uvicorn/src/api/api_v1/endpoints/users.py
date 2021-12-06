@@ -16,7 +16,10 @@ db = Gino()
 from uuid import uuid4
 import requests
 
+
+from fastapi.templating import Jinja2Templates
 router = APIRouter()
+templates = Jinja2Templates(directory="./templates")
 
 @router.get('/', response_model=List[User])
 async def read_users(
@@ -28,9 +31,8 @@ async def read_users(
     """
     users = await ORMUser.query.gino.all()
     return users
-@router.get('/start',response_class=HTMLResponse)
-async def start():
-    
+@router.get('/start',response_class=HTMLResponse )
+async def start(request: Request)-> Any:
     html_content = f"""
 <!DOCTYPE html>
 <html>
@@ -47,10 +49,11 @@ async def start():
  </body>
 </html>
 """
-    return html_content
+    return templates.TemplateResponse('index.html',{"request":request})
 @router.post('/login')
-async def login(email = Form(...),password = Form(...) ,response=Request,CookieId: Optional[str] = Cookie(None)) -> Any: 
+async def login(email = Form(...),password = Form(...),CookieId: Optional[str] = Cookie(None)) -> Any: 
     #request.json()
+    response: Request
     if CookieId is None: 
         check : ORMUser = await ORMUser.check_password(email,password)
         username = email
@@ -97,17 +100,17 @@ async def create_user(
     return 'ok'
 
 
-@router.get('/{id}', response_model=User)
-async def read_user(
-    request: Request,
-    id: str
-) -> Any:
-    """
-    Retrieve user by id
-    """
-    request.app.logger.debug(id)
-    user : ORMUser = await ORMUser.get(id)
-    return User.from_orm(user)
+# @router.get('/{id}', response_model=User)
+# async def read_user(
+#     request: Request,
+#     id: str
+# ) -> Any:
+#     """
+#     Retrieve user by id
+#     """
+#     request.app.logger.debug(id)
+#     user : ORMUser = await ORMUser.get(id)
+#     return User.from_orm(user)
 
 
 @router.put('/{id}', response_model=User)
