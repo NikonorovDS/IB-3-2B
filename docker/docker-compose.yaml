@@ -14,26 +14,14 @@ services:
         - PG_DB_PORT=${POSTGRES_PORT}
     networks: 
       - custom_network_1
-    volumes:
-      - ../clouds/data/clouds_imgs:/app/data/
+   
     environment:
       - POSTGRES_SERVER=db
     ports:
       - 80:80
     depends_on:
       - db
-  redis:
-    container_name: redis
-    image: "redis:alpine"
-    command: redis-server --requirepass ${REDIS_PASSWORD}
-    volumes:
-      - ../clouds/data/redis-data:/var/lib/redis
-      - ../clouds/data/redis.conf:/usr/local/etc/redis/redis.conf
-    environment:
-      - REDIS_REPLICATION_MODE=master
-    networks: 
-      - custom_network_1
-
+  
   db:
     container_name: db
     image: postgres
