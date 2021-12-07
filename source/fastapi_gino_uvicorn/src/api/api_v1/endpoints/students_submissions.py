@@ -52,3 +52,7 @@ async def create_spravka(student = Form(...), way_point = Form(...), quantity = 
 async def get():
     pop = await ORMDopusk_submissions.query.gino.all()
     return pop
+@router.post('/update_status')
+async def update_status(student = Form(...), teacher = Form(...), subject = Form(...),new_status = Form(...)) -> Any:
+    status = await ORMDopusk_submissions.update_status(student,subject,teacher,new_status)
+    return status

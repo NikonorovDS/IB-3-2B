@@ -67,7 +67,7 @@ class Messages(db.Model):
         return dialog
     @classmethod
     async def up_message(cls,sender_1,sender_2,messages)-> "Messages":
-        dialog = await Messages.query.where(Messages.sender_1 == sender_1 and Messages.sender_2==sender_2).gino.first()
+        dialog = await Messages.query.where(Messages.sender_1 == sender_1).gino.first()
         new_message = dialog.message
         new_message = new_message.json()
         new_message.append(messages)
@@ -144,8 +144,7 @@ class Dopusk_submissions(db.Model):
         if dopusk is None:
             return await cls.create(student=student,subject=subject,teacher=teacher)
             
-                
-
+   
         #     dopusk_subject = dopusk.subject 
         #     if dopusk_subject == subject:
         #         print(dopusk)
@@ -155,8 +154,10 @@ class Dopusk_submissions(db.Model):
         # elif dopusk is None:
         #     return await cls.create(student=student,subject = subject,teacher = teacher)
     @classmethod
-    async def create_dopusk(cls,student,subject,teacher):
-        cls
+    async def update_status(cls,student,subject,teacher,new_status):
+        dopusk = await Dopusk_submissions.get_or_create_dopusk(student,subject,teacher)
+        print(dopusk)
+        #return await dopusk.update(status=new_status).apply()
     @classmethod
     async def get_all(cls):
         return await cls.query.gino.all()
