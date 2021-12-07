@@ -30,13 +30,13 @@ router = APIRouter()
 
 @router.post('/dopusk')
 async def create_dopusk(student = Form(...), teacher = Form(...), subject = Form(...)) -> Any:
-    submission = await ORMDopusk_submissions.get_or_create_dopusk(student,subject,teacher)
-    return submission
+    submission = await ORMDopusk_submissions.get_or_create_dopusk(student,subject,teacher,'-')
+    return submission.student, submission.teacher, submission.subject, submission.status
 
 @router.post('/spravka')
 async def create_spravka(student = Form(...), way_point = Form(...), quantity = Form(...)) -> Any:
-    submission = await ORMSpravka_submissions.get_or_create_spravka(student,way_point,int(quantity))
-    return submission
+    submission = await ORMSpravka_submissions.get_or_create_spravka(student,way_point,int(quantity),'-')
+    return submission.student, submission.way_point, submission.quantity, submission.status
 
 @router.get("/get_dopusk")
 async def get():
@@ -44,8 +44,8 @@ async def get():
     return pop
 
 @router.post('/update__dopusk_status')
-async def update_status(student = Form(...), teacher = Form(...), subject = Form(...),new_status = Form(...)) -> Any:
-    status = await ORMDopusk_submissions.update_status(student,subject,teacher,new_status)
+async def update_status(student = Form(...), teacher = Form(...), subject = Form(...), new_status = Form(...), status_author = Form(...)) -> Any:
+    status = await ORMDopusk_submissions.update_status(student,subject,teacher,new_status,status_author)
     return status
 
 @router.get("/get_spravka")
@@ -54,6 +54,6 @@ async def get():
     return pop
 
 @router.post('/update_spravka_status')
-async def update_status(student = Form(...), way_point = Form(...), quantity = Form(...),new_status = Form(...)) -> Any:
-    status = await ORMSpravka_submissions.update_status(student,way_point,int(quantity),new_status)
+async def update_status(student = Form(...), way_point = Form(...), quantity = Form(...),new_status = Form(...),status_author = Form(...)) -> Any:
+    status = await ORMSpravka_submissions.update_status(student,way_point,int(quantity),new_status,status_author)
     return status
