@@ -130,6 +130,7 @@ class Student_submissions(db.Model):
     teacher: str =  db.Column(db.String,default='-')
     subject: str =  db.Column(db.String,default='-')
     way_point: str =  db.Column(db.String,default='-')
+    quantity: int = db.Column(db.Integer,default='-')
     status: str =  db.Column(db.String,default='-')
 
     @classmethod
