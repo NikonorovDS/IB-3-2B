@@ -19,7 +19,7 @@ db : Gino = Gino(dsn=settings.get_postgres_dsn())
 
 db.init_app(app)
 
-from api.api_v1.api import usersRouter, pagesRouter
+from api.api_v1.api import usersRouter, pagesRouter, submissionsRouter
 
 app.include_router(usersRouter, prefix=settings.API_VERSION_STR, tags=['Users'])
 
@@ -27,3 +27,4 @@ app.include_router(pagesRouter, prefix=settings.API_VERSION_STR, tags=['Pages'])
 
 app.include_router(pagesRouter, prefix=settings.API_VERSION_STR, tags=['Dialogs'])
 
+app.include_router(submissionsRouter, prefix=settings.API_VERSION_STR, tags=['Submissions'])

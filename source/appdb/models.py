@@ -130,13 +130,21 @@ class Student_submissions(db.Model):
     teacher: str =  db.Column(db.String,default='-')
     subject: str =  db.Column(db.String,default='-')
     way_point: str =  db.Column(db.String,default='-')
-    quantity: int = db.Column(db.Integer,default='-')
+    quantity: int = db.Column(db.Integer,default=0)
     status: str =  db.Column(db.String,default='-')
 
     @classmethod
-    async def get_or_create(cls,student,subject,way_point)-> "Student_submissions":
-        dialog = await Student_submissions.query.where(Student_submissions.student == student and Student_submissions.subject == subject or Student_submissions.student == student and Student_submissions.way_point == way_point).gino.first()
+    async def get_or_create_dopusk(cls,student,subject,teacher)-> "Student_submissions":
+        dialog = await Student_submissions.query.where(Student_submissions.student == student and Student_submissions.subject == subject ).gino.first()
         if dialog is None:
-            dialog = await cls.create(student=student,subject=subject,way_point=way_point)
+            dialog = await cls.create(student=student,subject=subject,teacher=teacher)
             return dialog
-        return dialog    
+        return dialog  
+
+    @classmethod
+    async def get_or_create_spravka(cls,student,way_point,quantity)-> "Student_submissions":
+        dialog = await Student_submissions.query.where(Student_submissions.student == student and Student_submissions.way_point == way_point).gino.first()
+        if dialog is None:
+            dialog = await cls.create(student=student,way_point=way_point,quantity=quantity)
+            return dialog
+        return dialog
