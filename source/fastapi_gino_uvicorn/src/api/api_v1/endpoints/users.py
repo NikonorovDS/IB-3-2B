@@ -48,26 +48,11 @@ async def start(request: Request,response: Response,CookieId: Optional[str] = Co
     check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
     print(check)
     if check == 504:
-        response = templates.TemplateResponse('index.html',{"request":request})
+        response = templates.TemplateResponse('login.html',{"request":request})
         response.delete_cookie("CookieId")
         return response
-    html_content = f"""
-<!DOCTYPE html>
-<html>
- <head>
-  <meta charset="utf-8">
-  <title>Форма</title>
- </head>
- <body>
-  <form id="auth" action="http://localhost:80/v1/users/login" method="post"></form>
-  <p>...</p>
-  <p><input name="email" form="auth">
-  <input type="password" name="password" form="auth"></p>
-  <p><input type="submit" form="auth"></p> 
- </body>
-</html>
-"""
-    return templates.TemplateResponse('index.html',{"request":request})
+
+    return templates.TemplateResponse('login.html',{"request":request})
 @router.post('/login')
 async def login(email = Form(...),password = Form(...),CookieId: Optional[str] = Cookie(None)) -> Any: 
     #request.json()
