@@ -129,25 +129,28 @@ class Dopusk_submissions(db.Model):
     student: str =  db.Column(db.String,default='-')
     teacher: str =  db.Column(db.String,default='-')
     subject: str =  db.Column(db.String,default='-')
+    status_author: str = db.Column(db.String,default='-')
     status: str =  db.Column(db.String,default='Получено')
+ 
 
     @classmethod
-    async def get_or_create_dopusk(cls,student,subject,teacher)-> "Dopusk_submissions":
+    async def get_or_create_dopusk(cls,student,subject,teacher,status_author)-> "Dopusk_submissions":
         dopusk = await cls.query.where(cls.student == student).gino.all()
         if dopusk is not None:
             for i in dopusk:
                 dopusk_subject = i.subject
                 if dopusk_subject == subject:
                     return i
-            return await cls.create(student=student,subject=subject,teacher=teacher)
+            return await cls.create(student=student,subject=subject,teacher=teacher,status_author=status_author)
         if dopusk is None:
-            return await cls.create(student=student,subject=subject,teacher=teacher)
+            return await cls.create(student=student,subject=subject,teacher=teacher,status_author=status_author)
 
     @classmethod
-    async def update_status(cls,student,subject,teacher,new_status):
-        dopusk = await Dopusk_submissions.get_or_create_dopusk(student,subject,teacher)
+    async def update_status(cls,student,subject,teacher,new_status,status_author):
+        dopusk = await Dopusk_submissions.get_or_create_dopusk(student,subject,teacher,status_author)
         print(dopusk)
         new_dopusk_status = await dopusk.update(status=new_status).apply()
+        new_status_author = await dopusk.update(status_author=status_author).apply()
         return 
         
     @classmethod
@@ -157,30 +160,32 @@ class Dopusk_submissions(db.Model):
 
 
 class Spravka_submissions(db.Model): 
-    __tablename__ = 'student_submissions'
+    __tablename__ = 'spravka_submissions'
     id:  int = db.Column(db.Integer, primary_key=True ,autoincrement=True)
     student: str =  db.Column(db.String,default='-')
     way_point: str =  db.Column(db.String,default='-')
+    status_author: str = db.Column(db.String,default='-')
     quantity: int = db.Column(db.Integer,default=0)
     status: str =  db.Column(db.String,default='Получено')
 
     @classmethod
-    async def get_or_create_spravka(cls,student,way_point,quantity)-> "Spravka_submissions":
+    async def get_or_create_spravka(cls,student,way_point,quantity,status_author)-> "Spravka_submissions":
         spravka = await cls.query.where(cls.student == student).gino.all()
         if spravka is not None:
             for i in spravka:
                 spravka_way_piont = i.way_point
                 if spravka_way_piont == way_point:
                     return i
-            return await cls.create(student=student,way_point=way_point,quantity=quantity)
+            return await cls.create(student=student,way_point=way_point,quantity=quantity,status_author=status_author)
         if spravka is None:
-            return await cls.create(student=student,way_point=way_point,quantity=quantity)
+            return await cls.create(student=student,way_point=way_point,quantity=quantity,status_author=status_author)
 
     @classmethod
-    async def update_status(cls,student,way_point,quantity,new_status):
-        spravka = await Spravka_submissions.get_or_create_spravka(student,way_point,quantity)
+    async def update_status(cls,student,way_point,quantity,new_status,status_author):
+        spravka = await Spravka_submissions.get_or_create_spravka(student,way_point,quantity,status_author)
         print(spravka)
         new_spravka_status = await spravka.update(status=new_status).apply()
+        new_status_author = await spravka.update(status_author=status_author).apply()
         return 
 
     @classmethod
