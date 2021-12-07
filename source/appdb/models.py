@@ -123,7 +123,7 @@ class Cookies(db.Model):
                 await cls.delete.where(Cookies.value == i.value).gino.status()
                 
 
-class student_submissions(db.Model): 
+class Student_submissions(db.Model): 
     __tablename__ = 'student_submissions'
     id:  int = db.Column(db.Integer, primary_key=True ,autoincrement=True)
     student: str =  db.Column(db.String,default='-')
@@ -133,9 +133,9 @@ class student_submissions(db.Model):
     status: str =  db.Column(db.String,default='-')
 
     @classmethod
-    async def get_or_create(cls,sender_1,sender_2)-> "student_submissions":
-        dialog = await student_submissions.query.where(student_submissions.student == student and student_submissions.teacher == teacher).gino.first()
+    async def get_or_create(cls,student,teacher)-> "Student_submissions":
+        dialog = await Student_submissions.query.where(Student_submissions.student == student and Student_submissions.teacher == teacher).gino.first()
         if dialog is None:
-            dialog = await cls.create(sender_1=sender_1,sender_2=sender_2)
+            dialog = await cls.create(student=student,teacher=teacher)
             return dialog
         return dialog    
