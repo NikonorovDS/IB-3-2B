@@ -133,15 +133,33 @@ class Dopusk_submissions(db.Model):
 
     @classmethod
     async def get_or_create_dopusk(cls,student,subject,teacher)-> "Dopusk_submissions":
-        dialog = await Dopusk_submissions.query.where(Dopusk_submissions.student == student).gino.all()
-        for i in dialog:
-            if i.subject == subject:
-                return i
-            else:
-                dialog = await cls.create(student=student,subject=subject,teacher=teacher)
-                return None
+        dopusk = await cls.query.where(cls.student == student).gino.all()
+        print(dopusk)
+        if dopusk is not None:
+            for i in dopusk:
+                dopusk_subject = i.subject
+                if dopusk_subject == subject:
+                    return i
+            return await cls.create(student=student,subject=subject,teacher=teacher)
+        if dopusk is None:
+            return await cls.create(student=student,subject=subject,teacher=teacher)
+            
+                
 
-
+        #     dopusk_subject = dopusk.subject 
+        #     if dopusk_subject == subject:
+        #         print(dopusk)
+        #         return dopusk 
+        #     else:
+        #         return await cls.create(student=student,subject = subject,teacher = teacher)
+        # elif dopusk is None:
+        #     return await cls.create(student=student,subject = subject,teacher = teacher)
+    @classmethod
+    async def create_dopusk(cls,student,subject,teacher):
+        cls
+    @classmethod
+    async def get_all(cls):
+        return await cls.query.gino.all()
 '''
         else:
             dialog = await dialog.query.where(dialog.subject == subject).gino.first()
@@ -163,8 +181,5 @@ class Spravka_submissions(db.Model):
 
     @classmethod
     async def get_or_create_spravka(cls,student,way_point,quantity)-> "Spravka_submissions":
-        dialog = await Spravka_submissions.query.where(Spravka_submissions.student == student and Spravka_submissions.way_point == way_point).gino.first()
-        if dialog is None:
-            dialog = await cls.create(student=student,way_point=way_point,quantity=quantity)
-            return dialog
-        return dialog
+        spravka = cls.query.where(cls.student == student).first()
+        spravka = spravka.way_point
