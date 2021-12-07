@@ -134,7 +134,6 @@ class Dopusk_submissions(db.Model):
     @classmethod
     async def get_or_create_dopusk(cls,student,subject,teacher)-> "Dopusk_submissions":
         dopusk = await cls.query.where(cls.student == student).gino.all()
-        print(dopusk)
         if dopusk is not None:
             for i in dopusk:
                 dopusk_subject = i.subject
@@ -143,34 +142,18 @@ class Dopusk_submissions(db.Model):
             return await cls.create(student=student,subject=subject,teacher=teacher)
         if dopusk is None:
             return await cls.create(student=student,subject=subject,teacher=teacher)
-            
-   
-        #     dopusk_subject = dopusk.subject 
-        #     if dopusk_subject == subject:
-        #         print(dopusk)
-        #         return dopusk 
-        #     else:
-        #         return await cls.create(student=student,subject = subject,teacher = teacher)
-        # elif dopusk is None:
-        #     return await cls.create(student=student,subject = subject,teacher = teacher)
+
     @classmethod
     async def update_status(cls,student,subject,teacher,new_status):
         dopusk = await Dopusk_submissions.get_or_create_dopusk(student,subject,teacher)
         print(dopusk)
         new_dopusk_status = await dopusk.update(status=new_status).apply()
         return 
+        
     @classmethod
     async def get_all(cls):
         return await cls.query.gino.all()
-'''
-        else:
-            dialog = await dialog.query.where(dialog.subject == subject).gino.first()
-            if dialog == None:
-                dialog = await cls.create(student=student,subject=subject,teacher=teacher)
-                return None
-            else:
-                return dialog
-'''
+
 
 
 class Spravka_submissions(db.Model): 
@@ -183,5 +166,23 @@ class Spravka_submissions(db.Model):
 
     @classmethod
     async def get_or_create_spravka(cls,student,way_point,quantity)-> "Spravka_submissions":
-        spravka = cls.query.where(cls.student == student).first()
-        spravka = spravka.way_point
+        spravka = await cls.query.where(cls.student == student).gino.all()
+        if spravka is not None:
+            for i in spravka:
+                spravka_way_piont = i.way_point
+                if spravka_way_piont == way_point:
+                    return i
+            return await cls.create(student=student,way_point=way_point,quantity=quantity)
+        if spravka is None:
+            return await cls.create(student=student,way_point=way_point,quantity=quantity)
+
+    @classmethod
+    async def update_status(cls,student,way_point,quantity,new_status):
+        spravka = await Spravka_submissions.get_or_create_spravka(student,way_point,quantity)
+        print(spravka)
+        new_spravka_status = await spravka.update(status=new_status).apply()
+        return 
+
+    @classmethod
+    async def get_all(cls):
+        return await cls.query.gino.all()    
