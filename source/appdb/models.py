@@ -129,7 +129,7 @@ class Dopusk_submissions(db.Model):
     student: str =  db.Column(db.String,default='-')
     teacher: str =  db.Column(db.String,default='-')
     subject: str =  db.Column(db.String,default='-')
-    status: str =  db.Column(db.String,default='-')
+    status: str =  db.Column(db.String,default='Получено')
 
     @classmethod
     async def get_or_create_dopusk(cls,student,subject,teacher)-> "Dopusk_submissions":
@@ -137,7 +137,7 @@ class Dopusk_submissions(db.Model):
         if dialog is None:
             dialog = await cls.create(student=student,subject=subject,teacher=teacher)
             return dialog
-        return dialog  
+        return dialog
 
 
 class Spravka_submissions(db.Model): 
@@ -146,7 +146,7 @@ class Spravka_submissions(db.Model):
     student: str =  db.Column(db.String,default='-')
     way_point: str =  db.Column(db.String,default='-')
     quantity: int = db.Column(db.Integer,default=0)
-    status: str =  db.Column(db.String,default='-')
+    status: str =  db.Column(db.String,default='Получено')
 
     @classmethod
     async def get_or_create_spravka(cls,student,way_point,quantity)-> "Spravka_submissions":
