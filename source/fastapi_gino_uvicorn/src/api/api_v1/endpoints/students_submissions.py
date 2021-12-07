@@ -28,7 +28,7 @@ db = Gino()
 router = APIRouter()
 
 
-
+'''
 @router.get('/gd')
 async def get_dopusk() -> Any:
     submission = await ORMDopusk_submissions.query.gino.first()#нам нужно реализовать поиск по имени \ преподу , и при этом оставить first(). Чтобы не сломался return
@@ -38,11 +38,15 @@ async def get_dopusk() -> Any:
 async def get_spravka() -> Any:
     submission = await ORMSpravka_submissions.query.gino.first()#нам нужно реализовать поиск по имени \ преподу , и при этом оставить first(). Чтобы не сломался return
     return submission.student, submission.way_point, submission.quantity, submission.status
+'''
 
 @router.post('/pd')
 async def create_dopusk(student = Form(...), teacher = Form(...), subject = Form(...)) -> Any:
     submission = await ORMDopusk_submissions.get_or_create_dopusk(student,subject,teacher)
-    return submission.student, submission.teacher, submission.subject, submission.status
+    if submission == [] or submission == None:
+        pass
+    else:
+        return submission.student, submission.teacher, submission.subject, submission.status
 
 @router.post('/ps')
 async def create_spravka(student = Form(...), way_point = Form(...), quantity = Form(...)) -> Any:

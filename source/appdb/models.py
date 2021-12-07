@@ -133,11 +133,24 @@ class Dopusk_submissions(db.Model):
 
     @classmethod
     async def get_or_create_dopusk(cls,student,subject,teacher)-> "Dopusk_submissions":
-        dialog = await Dopusk_submissions.query.where(Dopusk_submissions.student == student and Dopusk_submissions.subject == subject).gino.first()
-        if dialog is None:
-            dialog = await cls.create(student=student,subject=subject,teacher=teacher)
-            return dialog
-        return dialog
+        dialog = await Dopusk_submissions.query.where(Dopusk_submissions.student == student).gino.all()
+        for i in dialog:
+            if i.subject == subject:
+                return i
+            else:
+                dialog = await cls.create(student=student,subject=subject,teacher=teacher)
+                return None
+
+
+'''
+        else:
+            dialog = await dialog.query.where(dialog.subject == subject).gino.first()
+            if dialog == None:
+                dialog = await cls.create(student=student,subject=subject,teacher=teacher)
+                return None
+            else:
+                return dialog
+'''
 
 
 class Spravka_submissions(db.Model): 
