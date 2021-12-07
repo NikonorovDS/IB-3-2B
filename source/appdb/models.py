@@ -122,3 +122,20 @@ class Cookies(db.Model):
             if int(period.days) > 7:
                 await cls.delete.where(Cookies.value == i.value).gino.status()
                 
+
+class student_submissions(db.Model): 
+    __tablename__ = 'student_submissions'
+    id:  int = db.Column(db.Integer, primary_key=True ,autoincrement=True)
+    student: str =  db.Column(db.String,default='-')
+    teacher: str =  db.Column(db.String,default='-')
+    subject: str =  db.Column(db.String,default='-')
+    way_pont: str =  db.Column(db.String,default='-')
+    status: str =  db.Column(db.String,default='-')
+
+    @classmethod
+    async def get_or_create(cls,sender_1,sender_2)-> "student_submissions":
+        dialog = await student_submissions.query.where(student_submissions.student == student and student_submissions.teacher == teacher).gino.first()
+        if dialog is None:
+            dialog = await cls.create(sender_1=sender_1,sender_2=sender_2)
+            return dialog
+        return dialog    
