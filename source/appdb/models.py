@@ -123,27 +123,34 @@ class Cookies(db.Model):
                 await cls.delete.where(Cookies.value == i.value).gino.status()
                 
 
-class Student_submissions(db.Model): 
-    __tablename__ = 'student_submissions'
+class Dopusk_submissions(db.Model): 
+    __tablename__ = 'dopusk_submissions'
     id:  int = db.Column(db.Integer, primary_key=True ,autoincrement=True)
     student: str =  db.Column(db.String,default='-')
     teacher: str =  db.Column(db.String,default='-')
     subject: str =  db.Column(db.String,default='-')
-    way_point: str =  db.Column(db.String,default='-')
-    quantity: int = db.Column(db.Integer,default=0)
     status: str =  db.Column(db.String,default='-')
 
     @classmethod
-    async def get_or_create_dopusk(cls,student,subject,teacher)-> "Student_submissions":
-        dialog = await Student_submissions.query.where(Student_submissions.student == student and Student_submissions.subject == subject ).gino.first()
+    async def get_or_create_dopusk(cls,student,subject,teacher)-> "Dopusk_submissions":
+        dialog = await Dopusk_submissions.query.where(Dopusk_submissions.student == student and Dopusk_submissions.subject == subject).gino.first()
         if dialog is None:
             dialog = await cls.create(student=student,subject=subject,teacher=teacher)
             return dialog
         return dialog  
 
+
+class Spravka_submissions(db.Model): 
+    __tablename__ = 'student_submissions'
+    id:  int = db.Column(db.Integer, primary_key=True ,autoincrement=True)
+    student: str =  db.Column(db.String,default='-')
+    way_point: str =  db.Column(db.String,default='-')
+    quantity: int = db.Column(db.Integer,default=0)
+    status: str =  db.Column(db.String,default='-')
+
     @classmethod
-    async def get_or_create_spravka(cls,student,way_point,quantity)-> "Student_submissions":
-        dialog = await Student_submissions.query.where(Student_submissions.student == student and Student_submissions.way_point == way_point).gino.first()
+    async def get_or_create_spravka(cls,student,way_point,quantity)-> "Spravka_submissions":
+        dialog = await Spravka_submissions.query.where(Spravka_submissions.student == student and Spravka_submissions.way_point == way_point).gino.first()
         if dialog is None:
             dialog = await cls.create(student=student,way_point=way_point,quantity=quantity)
             return dialog
