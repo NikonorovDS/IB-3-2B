@@ -129,13 +129,13 @@ class Student_submissions(db.Model):
     student: str =  db.Column(db.String,default='-')
     teacher: str =  db.Column(db.String,default='-')
     subject: str =  db.Column(db.String,default='-')
-    way_pont: str =  db.Column(db.String,default='-')
+    way_point: str =  db.Column(db.String,default='-')
     status: str =  db.Column(db.String,default='-')
 
     @classmethod
-    async def get_or_create(cls,student,teacher)-> "Student_submissions":
-        dialog = await Student_submissions.query.where(Student_submissions.student == student and Student_submissions.teacher == teacher).gino.first()
+    async def get_or_create(cls,student,subject,way_point)-> "Student_submissions":
+        dialog = await Student_submissions.query.where(Student_submissions.student == student and Student_submissions.subject == subject or Student_submissions.student == student and Student_submissions.way_point == way_point).gino.first()
         if dialog is None:
-            dialog = await cls.create(student=student,teacher=teacher)
+            dialog = await cls.create(student=student,subject=subject,way_point=way_point)
             return dialog
         return dialog    
