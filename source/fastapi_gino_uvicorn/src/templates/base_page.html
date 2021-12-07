@@ -5,17 +5,20 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link  href="{{ url_for('static', path='/css/style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', path='/css/style.css') }}" rel="stylesheet">
+    <link rel="" href="/css/master.css">
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
     <div class="header">
         <div class="header-line">
-            <img src="/media/photo/logo.png", alt="logo">
+          <div class="logo">
+            <img src="..../media/logo.png", alt="logo">
+          </div>
+          <div>{% block name %}{% endblock %}</div>
         </div>
     </div>
     {% block content %}
-    <h2>hello</h2>
     {% endblock %}
 </body>
 </html>
