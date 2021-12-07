@@ -157,7 +157,8 @@ class Dopusk_submissions(db.Model):
     async def update_status(cls,student,subject,teacher,new_status):
         dopusk = await Dopusk_submissions.get_or_create_dopusk(student,subject,teacher)
         print(dopusk)
-        #return await dopusk.update(status=new_status).apply()
+        new_dopusk_status = await dopusk.update(status=new_status).apply()
+        return 
     @classmethod
     async def get_all(cls):
         return await cls.query.gino.all()
