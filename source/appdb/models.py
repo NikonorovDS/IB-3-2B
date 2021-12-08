@@ -9,7 +9,6 @@ import os
 
 db = Gino()
 import hashlib
-from datetime import date,datetime
 
 # from sqlalchemy import create_engine
 # from sqlalchemy.orm import sessionmaker
@@ -60,10 +59,11 @@ class Messages(db.Model):
     message_id : int =  db.Column(db.Integer,default=0,autoincrement=True)
     sender:str = db.Column(db.String, default='-')
     text: str = db.Column(db.Text,default='')
-    
+    date = db.Column(db.DateTime())
     @classmethod
     async def up_message(cls,chat_id,sender,text):
-        return await cls.create(chat_id=chat_id,sender=sender,text=text)
+        date = datetime.now()
+        return await cls.create(chat_id=chat_id,sender=sender,text=text,date = date)
     @classmethod
     async def get_message(cls,id):
         return await cls.get(id)
@@ -74,26 +74,18 @@ class Dialogs(db.Model):
     sender_2: str =  db.Column(db.String,default='-')
     dialog: db.Column(JSON, nullable=False, server_default="{}")
     
-    #
     @classmethod
     async def get_or_create(cls,sender_1,sender_2)-> "Dialogs":
-        dialog = await Dialogs.query.where(Dialogs.sender_1 == sender_1).gino.all()
-        if dialog is not None:
-            for mes in dialog:
-                if mes.sender_2 == sender_2:
-                    return mes
-            return await cls.create(sender_1 = sender_1 , sender_2 = sender_2)
+        dialog = await Dialogs.query.where(Dialogs.sender_1 == sender_1 and Dialogs.sender_2== sender_2).gino.first()
         if dialog is None:
-            await cls.create(sender_1 = sender_1 , sender_2 = sender_2)
-        # dialog = await Messages.query.where(Messages.sender_1 == sender_1 and Messages.sender_2==sender_2).gino.first()
-        # if dialog is None:
-        #     dialog = await cls.create(sender_1=sender_1,sender_2=sender_2)
-        #     return dialog
-        # return dialog
+            dialog  = await Dialogs.query.where(Dialogs.sender_1 == sender_2 and Dialogs.sender_1== sender_2).gino.first()
+            if dialog is None:
+                dialog = await cls.create(sender_1 = sender_1 , sender_2 = sender_2)
+        return dialog
+   
     @classmethod
     async def up_message(cls,sender_1,sender_2,message)-> "Messages":
         dialog = await Dialogs.get_or_create(sender_1=sender_1,sender_2=sender_2)
-        id = dialog.id
         new = await Messages.up_message(dialog.id,sender_1,message)
         return new
 
@@ -158,29 +150,26 @@ class Dopusk_submissions(db.Model):
     subject: str =  db.Column(db.String,default='-')
     status_author: str = db.Column(db.String,default='-')
     status: str =  db.Column(db.String,default='Получено')
-    time : str = db.Column(db.String,default= '-')
-    
  
 
     @classmethod
-    async def get_or_create_dopusk(cls,student,subject,teacher,status_author,time)-> "Dopusk_submissions":
+    async def get_or_create_dopusk(cls,student,subject,teacher,status_author)-> "Dopusk_submissions":
         dopusk = await cls.query.where(cls.student == student).gino.all()
         if dopusk is not None:
             for i in dopusk:
                 dopusk_subject = i.subject
                 if dopusk_subject == subject:
                     return i
-            return await cls.create(student=student,subject=subject,teacher=teacher,status_author=status_author,time=time)
+            return await cls.create(student=student,subject=subject,teacher=teacher,status_author=status_author)
         if dopusk is None:
-            return await cls.create(student=student,subject=subject,teacher=teacher,status_author=status_author,time=time)
+            return await cls.create(student=student,subject=subject,teacher=teacher,status_author=status_author)
 
     @classmethod
     async def update_status(cls,student,subject,teacher,new_status,status_author):
-        dopusk = await Dopusk_submissions.get_or_create_dopusk(student,subject,teacher,status_author,time = str(datetime.now()))
-        #print(dopusk)
+        dopusk = await Dopusk_submissions.get_or_create_dopusk(student,subject,teacher,status_author)
+        print(dopusk)
         new_dopusk_status = await dopusk.update(status=new_status).apply()
         new_status_author = await dopusk.update(status_author=status_author).apply()
-        new_time = dopusk.update(time=str(datetime.now())).apply()
         return 
         
     @classmethod
