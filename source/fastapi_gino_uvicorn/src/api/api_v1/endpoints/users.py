@@ -26,6 +26,11 @@ import requests
 from fastapi.templating import Jinja2Templates
 router = APIRouter()
 templates = Jinja2Templates(directory="./templates")
+
+
+
+
+
 @router.get("/cookies")
 async def read_cookies() -> Any:
     cookies = await ORMCookies.query.gino.all()

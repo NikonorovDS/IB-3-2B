@@ -4,7 +4,9 @@ from fastapi.param_functions import Cookie
 from sqlalchemy.dialects.postgresql import JSON
 from datetime import datetime,timezone
 from gino import Gino
-import os 
+import os
+
+
 db = Gino()
 import hashlib
 
@@ -50,35 +52,59 @@ class User(db.Model) :
                 return False
         else: 
             return False
-        
-class Messages(db.Model): 
+class Messages(db.Model):
     __tablename__ = 'messages'
-    id:  int = db.Column(db.Integer, primary_key=True ,autoincrement=True)
-    sender_1: int =  db.Column(db.Integer,default='-')
-    sender_2: int =  db.Column(db.Integer,default='-')
-    dialog: db.Column(JSON, nullable=False, server_default="{}")
+    id:  int = db.Column(db.Integer, primary_key=True,autoincrement=True)
+    chat_id : int =  db.Column(db.Integer,default=0)
+    message_id : int =  db.Column(db.Integer,default=0,autoincrement=True)
+    sender:str = db.Column(db.String, default='-')
+    text: str = db.Column(db.Text,default='')
     
     @classmethod
-    async def get_or_create(cls,sender_1,sender_2)-> "Messages":
-        dialog = await Messages.query.where(Messages.sender_1 == sender_1 and Messages.sender_2==sender_2).gino.first()
-        if dialog is None:
-            dialog = await cls.create(sender_1=sender_1,sender_2=sender_2)
-            return dialog
-        return dialog
+    async def up_message(cls,chat_id,sender,text):
+        return await cls.create(chat_id=chat_id,sender=sender,text=text)
     @classmethod
-    async def up_message(cls,sender_1,sender_2,messages)-> "Messages":
-        dialog = await Messages.query.where(Messages.sender_1 == sender_1).gino.first()
-        new_message = dialog.message
-        new_message = new_message.json()
-        new_message.append(messages)
-        dialog.update(messages=new_message)
-        return new_message
+    async def get_message(cls,id):
+        return await cls.get(id)
+class Dialogs(db.Model): 
+    __tablename__ = 'dialogs'
+    id:  int = db.Column(db.Integer, primary_key=True ,autoincrement=True)
+    sender_1: str =  db.Column(db.String,default='-')
+    sender_2: str =  db.Column(db.String,default='-')
+    dialog: db.Column(JSON, nullable=False, server_default="{}")
+    
+    #
+    @classmethod
+    async def get_or_create(cls,sender_1,sender_2)-> "Dialogs":
+        dialog = await Dialogs.query.where(Dialogs.sender_1 == sender_1).gino.all()
+        if dialog is not None:
+            for mes in dialog:
+                if mes.sender_2 == sender_2:
+                    return mes
+            return await cls.create(sender_1 = sender_1 , sender_2 = sender_2)
+        if dialog is None:
+            await cls.create(sender_1 = sender_1 , sender_2 = sender_2)
+        # dialog = await Messages.query.where(Messages.sender_1 == sender_1 and Messages.sender_2==sender_2).gino.first()
+        # if dialog is None:
+        #     dialog = await cls.create(sender_1=sender_1,sender_2=sender_2)
+        #     return dialog
+        # return dialog
+    @classmethod
+    async def up_message(cls,sender_1,sender_2,message)-> "Messages":
+        dialog = await Dialogs.get_or_create(sender_1=sender_1,sender_2=sender_2)
+        id = dialog.id
+        new = await Messages.up_message(dialog.id,sender_1,message)
+        return new
 
+    async def get_dialog(sender_1,sender_2)-> "Messages":
+        dialog = await Dialogs.get_or_create(sender_1=sender_1,sender_2=sender_2)
+        messages = await Messages.query.where(Messages.chat_id==dialog.id).gino.all()
+        return messages
 
 class Cookies(db.Model): 
     __tablename__ = 'cookies'
     value: str =  db.Column(db.String,primary_key=True)
-    userId: str = db.Column(db.String, default=0)
+    userId: str = db.Column(db.String, default='-')
    
     date = db.Column(db.DateTime())
     @classmethod
