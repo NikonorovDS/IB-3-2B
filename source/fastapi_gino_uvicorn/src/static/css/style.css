@@ -63,8 +63,9 @@ input{
 
 button{
   margin-top: 20px;
-  top: 25%
-  width: 50%;
+  position: relative;
+  max-width: 75%;
+  left: 12.5%;
   display: block;
   width: 100%;
   background: rgba(114,212,202,1);
