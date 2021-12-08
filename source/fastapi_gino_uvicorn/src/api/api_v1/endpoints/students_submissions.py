@@ -20,6 +20,7 @@ from gino import Gino
 import os
 from models.models import Dopusk_submissions as ORMDopusk_submissions
 from models.models import Spravka_submissions as ORMSpravka_submissions
+from datetime import date,datetime
 
 
 db = Gino()
@@ -30,8 +31,8 @@ router = APIRouter()
 
 @router.post('/dopusk')
 async def create_dopusk(student = Form(...), teacher = Form(...), subject = Form(...)) -> Any:
-    submission = await ORMDopusk_submissions.get_or_create_dopusk(student,subject,teacher,'-')
-    return submission.student, submission.teacher, submission.subject, submission.status
+    submission = await ORMDopusk_submissions.get_or_create_dopusk(student,subject,teacher,'-',time = str(datetime.now()))
+    return submission.student, submission.teacher, submission.subject, submission.status, submission.time
 
 @router.post('/spravka')
 async def create_spravka(student = Form(...), way_point = Form(...), quantity = Form(...)) -> Any:
