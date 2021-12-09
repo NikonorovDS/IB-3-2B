@@ -150,26 +150,34 @@ class Dopusk_submissions(db.Model):
     subject: str =  db.Column(db.String,default='-')
     status_author: str = db.Column(db.String,default='-')
     status: str =  db.Column(db.String,default='Получено')
+    date = db.Column(db.DateTime())
  
 
     @classmethod
     async def get_or_create_dopusk(cls,student,subject,teacher,status_author)-> "Dopusk_submissions":
+        date = datetime.now()
         dopusk = await cls.query.where(cls.student == student).gino.all()
         if dopusk is not None:
             for i in dopusk:
                 dopusk_subject = i.subject
                 if dopusk_subject == subject:
                     return i
-            return await cls.create(student=student,subject=subject,teacher=teacher,status_author=status_author)
+            return await cls.create(student=student,subject=subject,teacher=teacher,status_author=status_author,date = date)
         if dopusk is None:
-            return await cls.create(student=student,subject=subject,teacher=teacher,status_author=status_author)
+            return await cls.create(student=student,subject=subject,teacher=teacher,status_author=status_author,date = date)
 
     @classmethod
     async def update_status(cls,student,subject,teacher,new_status,status_author):
-        dopusk = await Dopusk_submissions.get_or_create_dopusk(student,subject,teacher,status_author)
-        print(dopusk)
-        new_dopusk_status = await dopusk.update(status=new_status).apply()
-        new_status_author = await dopusk.update(status_author=status_author).apply()
+       #dopusk = await Dopusk_submissions.get_or_create_dopusk(student,subject,teacher,status_author)
+        #print(dopusk)
+        dopusk = await cls.query.where(Dopusk_submissions.student == student and Dopusk_submissions.subject == subject and Dopusk_submissions.teacher == teacher).gino.first()
+        if dopusk is not None:
+            new_dopusk_status = await dopusk.update(status=new_status).apply()
+            new_status_author = await dopusk.update(status_author=status_author).apply()
+            new_time = await dopusk.update(date = datetime.now()).apply()
+            return dopusk
+        if dopusk is None:
+            return "dopusk is none"
         return 
         
     @classmethod
