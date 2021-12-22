@@ -1,25 +1,13 @@
 {% extends 'base_page.html'%}
 
-{% block name %}  <h1>Вход.</h1>{% endblock %}
 
 {% block content %}
 
-<div class="case">
-
-  <div class="login">
-  <h2>Ввидите email и пароль</h2>
-  <form action="http://localhost:80/v1/users/login" method="post">
-    <div class="input">
-      <div class="input_login">
-          <input type="mail" name="email" placeholder="Login">
-        </div>
-      <div class="input_password">
-        <input type="password" name="password" placeholder="Passwrod">
-      </div>
-    </div>
-    <button>Вход</button>
-  </form>
-  </div>
-</div>
+<form action="http://localhost:80/v1/users/login" method="post">
+  <div class="text">Войдите</div>
+  <input type="mail" name="email" placeholder="Login">
+  <input type="password" name="password" placeholder="Passwrod">
+  <button>Вход</button>
+</form>
 
 {% endblock %}
