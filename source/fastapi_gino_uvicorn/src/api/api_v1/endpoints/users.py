@@ -15,7 +15,7 @@ import starlette.status as status
 from starlette.responses import HTMLResponse
 from schemas.models import User, UserCreate, UserUpdate, UserLogin
 from models.models import User as ORMUser
-from models.models import Cookies as ORMCookies  
+from models.models import Cookies as ORMCookies
 from gino import Gino
 import os
 db = Gino()
@@ -48,6 +48,27 @@ async def read_users(
     """
     users = await ORMUser.query.gino.all()
     return users
+
+
+
+
+
+
+@router.get('/main',response_class=HTMLResponse )
+async def start(request: Request,response: Response):
+    return templates.TemplateResponse('main.html',{"request":request})
+
+@router.post('/main_admin',response_class=HTMLResponse )
+async def start(request: Request,response: Response):
+    return templates.TemplateResponse('main_admin.html',{"request":request})
+
+@router.post('/useradd',response_class=HTMLResponse )
+async def start(request: Request,response: Response):
+    return templates.TemplateResponse('useradd.html',{"request":request})
+
+
+
+
 @router.get('/start',response_class=HTMLResponse )
 async def start(request: Request,response: Response,CookieId: Optional[str] = Cookie(None))-> Any:
     check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
@@ -59,10 +80,10 @@ async def start(request: Request,response: Response,CookieId: Optional[str] = Co
 
     return templates.TemplateResponse('login.html',{"request":request})
 @router.post('/login')
-async def login(email = Form(...),password = Form(...),CookieId: Optional[str] = Cookie(None)) -> Any: 
+async def login(email = Form(...),password = Form(...),CookieId: Optional[str] = Cookie(None)) -> Any:
     #request.json()
     response: Request
-    if CookieId is None: 
+    if CookieId is None:
         check : ORMUser = await ORMUser.check_password(email,password)
         username = email
         if check is True:
@@ -75,17 +96,17 @@ async def login(email = Form(...),password = Form(...),CookieId: Optional[str] =
             return response
         else:
             return RedirectResponse(
-            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+            'http://localhost:80/v1/users/main',  status_code=status.HTTP_302_FOUND)
     elif CookieId is not None:
         check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
         if check == 504:
             return RedirectResponse(
             'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
         return{'meesage':'Your cookies is True'}
-      
-        
+
+
 @router.get('/login_test/{username}')
-async def test_login(username: str,password:str ,response: Request)-> Any: 
+async def test_login(username: str,password:str ,response: Request)-> Any:
     check : ORMUser = await ORMUser.check_password(email=username,password=password)
     if check is True:
         value = str(uuid4()).replace('-', '')
@@ -93,11 +114,11 @@ async def test_login(username: str,password:str ,response: Request)-> Any:
         response = JSONResponse(content=content)
         add_cookies : ORMCookies(userId=username,value=value)
         response.set_cookie(key="CookieId",value=value)
-        
+
         return response
     else:
         return requests.get("http://localhost:80/v1/users/start") #{'message':"password is not valid"}
-    
+
 @router.get('/test_working')
 async def read_cookies(CookieId: Optional[str] = Cookie(None)) -> Any:
     check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
@@ -106,7 +127,7 @@ async def read_cookies(CookieId: Optional[str] = Cookie(None)) -> Any:
             'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
     name = check.userId
     return name
-   
+
 @router.post('/')
 async def create_user(
     request : UserCreate

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="{{ url_for('static', path='/css/useradd.css') }}" rel="stylesheet">
+    <title>Main</title>
+
+</head>
+<body>
+  <div class="header">
+      <div class="header-line">
+        <div class="logo">
+            <a href="http://localhost:80/v1/users/start" method="get"><img src="{{ url_for('static', path='/photo/logo.png') }}" alt="logo"></a>
+        </div>
+      <a href="http://localhost:80/v1/users/start" method="get">
+        <button class="button_exit">Выход</button>
+      </a>
+      </div>
+  </div>
+  <div class="case">
+    <form action="http://localhost:80/v1/users/main1" method="post">
+      <input type="text" name="email" placeholder="Login">
+      <input type="text" name="password" placeholder="Passwrod">
+      <input type="text" name="email" placeholder="Login1">
+      <input type="text" name="password" placeholder="Passwrod1">
+      <input type="text" name="email" placeholder="Login2">
+      <input type="text" name="password" placeholder="Passwrod2">
+      <button class="button">Создать</button>
+    </form>
+
+  </div>
+</body>
+</html>

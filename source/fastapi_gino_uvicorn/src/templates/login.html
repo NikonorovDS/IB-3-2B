@@ -1,13 +1,27 @@
-{% extends 'base_page.html'%}
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="{{ url_for('static', path='/css/login.css') }}" rel="stylesheet">
+    <title>Login</title>
 
-{% block content %}
-
-<form action="http://localhost:80/v1/users/login" method="post">
-  <div class="text">Войдите</div>
-  <input type="mail" name="email" placeholder="Login">
-  <input type="password" name="password" placeholder="Passwrod">
-  <button>Вход</button>
-</form>
-
-{% endblock %}
+</head>
+<body>
+  <div class="header">
+      <div class="header-line">
+        <div class="logo">
+            <img src="{{ url_for('static', path='/photo/logo.png') }}" alt="logo">
+        </div>
+      </div>
+  </div>
+  <div class="case">
+    <form action="http://localhost:80/v1/users/login" method="post">
+      <div class="text">Войдите</div>
+      <input type="mail" name="email" placeholder="Login">
+      <input type="password" name="password" placeholder="Passwrod">
+      <button name="button">Вход</button>
+    </form>
+  </div>
+</body>
+</html>
