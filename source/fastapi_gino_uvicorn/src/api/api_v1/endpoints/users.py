@@ -27,7 +27,7 @@ from fastapi.templating import Jinja2Templates
 router = APIRouter()
 templates = Jinja2Templates(directory="./templates")
 
-
+import hashlib
 
 
 
@@ -82,6 +82,8 @@ async def start(request: Request,response: Response,CookieId: Optional[str] = Co
 @router.post('/login')
 async def login(email = Form(...),password = Form(...),CookieId: Optional[str] = Cookie(None)) -> Any:
     #request.json()
+    password = hashlib.sha256(password.encode())
+    password=str(password.hexdigest())
     response: Request
     if CookieId is None:
         check : ORMUser = await ORMUser.check_password(email,password)
@@ -103,7 +105,12 @@ async def login(email = Form(...),password = Form(...),CookieId: Optional[str] =
             return RedirectResponse(
             'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
         return{'meesage':'Your cookies is True'}
-
+@router.get('/login/desauth')
+async def desauth(response: Response,CookieId: Optional[str] = Cookie(None)) -> Any:
+    RedirectResponse.delete_cookie("CookieId")
+    return RedirectResponse(
+            'http://localhost:80/v1/users/main',  status_code=status.HTTP_302_FOUND)
+    
 
 @router.get('/login_test/{username}')
 async def test_login(username: str,password:str ,response: Request)-> Any:
