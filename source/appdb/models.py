@@ -23,7 +23,7 @@ except:
     from database import db
 class User(db.Model) :
     __tablename__ = 'users'
-    id: int = db.Column(db.Integer, primary_key=True ,autoincrement=True)
+    id: int = db.Column(db.Integer, primary_key=True ,autoincrement=True) 
     login: str = db.Column(db.String,default='-')
     email: str = db.Column(db.String,default='-')
     phone: str = db.Column(db.String,default='-')
@@ -38,7 +38,7 @@ class User(db.Model) :
     @classmethod
     async def create_user(cls,login,email,phone,role,name, admission_year, course,direction,group,hostel,password) -> "User":
         hash_password = hashlib.sha256(password.encode())
-        user = await cls.create(login=login,email=email,phone=phone,role=role,name=name,
+        user = await cls.create(login=login,email=email,phone=phone,role=role,name=name, 
         admission_year=admission_year, course=course,direction=direction,group=group
         ,hostel=hostel,password=str(hash_password.hexdigest()))
         return user
@@ -46,22 +46,22 @@ class User(db.Model) :
     async def check_password(cls,email,password)-> "User":
         pass_user = await User.query.where(User.email==email).gino.first()
         if pass_user is not None:
-            pass_user = pass_user.password
+            pass_user = pass_user.password 
             if pass_user == password:
                 return True
             else:
                 return False
-        else:
+        else: 
             return False
     @classmethod
-    async def get_role(cls,username) -> "User":
+    async def get_role(cls,username) -> "User": 
         user = await cls.query.where(User.email == username).gino.first()
         role = user.role
         return role
     @classmethod
     async def get_user_for_email(cls,email) -> "User":
         user = await cls.query.where(User.email == email).gino.first()
-        return user
+        return user 
 class Messages(db.Model):
     __tablename__ = 'messages'
     id:  int = db.Column(db.Integer, primary_key=True,autoincrement=True)
@@ -77,13 +77,13 @@ class Messages(db.Model):
     @classmethod
     async def get_message(cls,id):
         return await cls.get(id)
-class Dialogs(db.Model):
+class Dialogs(db.Model): 
     __tablename__ = 'dialogs'
     id:  int = db.Column(db.Integer, primary_key=True ,autoincrement=True)
     sender_1: str =  db.Column(db.String,default='-')
     sender_2: str =  db.Column(db.String,default='-')
     dialog: db.Column(JSON, nullable=False, server_default="{}")
-
+    
     @classmethod
     async def get_or_create(cls,sender_1,sender_2)-> "Dialogs":
         dialog = await Dialogs.query.where(Dialogs.sender_1 == sender_1 and Dialogs.sender_2== sender_2).gino.first()
@@ -92,7 +92,7 @@ class Dialogs(db.Model):
             if dialog is None:
                 dialog = await cls.create(sender_1 = sender_1 , sender_2 = sender_2)
         return dialog
-
+   
     @classmethod
     async def up_message(cls,sender_1,sender_2,message)-> "Messages":
         dialog = await Dialogs.get_or_create(sender_1=sender_1,sender_2=sender_2)
@@ -104,11 +104,11 @@ class Dialogs(db.Model):
         messages = await Messages.query.where(Messages.chat_id==dialog.id).gino.all()
         return messages
 
-class Cookies(db.Model):
+class Cookies(db.Model): 
     __tablename__ = 'cookies'
     value: str =  db.Column(db.String,primary_key=True)
     userId: str = db.Column(db.String, default='-')
-
+   
     date = db.Column(db.DateTime())
     @classmethod
     async def get_or_create(cls,userId,value)-> "Cookies":
@@ -150,13 +150,13 @@ class Cookies(db.Model):
             period = date - date_cookies
             if int(period.days) > 7:
                 await cls.delete.where(Cookies.value == i.value).gino.status()
-    @classmethod
+    @classmethod 
     async def delete_cookie(cls,value) -> "Cookies":
         ##cls.delete.where(Cookies.value == value).gino.status()
         return await cls.delete.where(Cookies.value == value).gino.status()
+                
 
-
-class Dopusk_submissions(db.Model):
+class Dopusk_submissions(db.Model): 
     __tablename__ = 'dopusk_submissions'
     id:  int = db.Column(db.Integer, primary_key=True ,autoincrement=True)
     student: str =  db.Column(db.String,default='-')
@@ -165,7 +165,7 @@ class Dopusk_submissions(db.Model):
     status_author: str = db.Column(db.String,default='-')
     status: str =  db.Column(db.String,default='Получено')
     date = db.Column(db.DateTime())
-
+ 
 
     @classmethod
     async def get_or_create_dopusk(cls,student,subject,teacher,status_author)-> "Dopusk_submissions":
@@ -192,7 +192,7 @@ class Dopusk_submissions(db.Model):
             return dopusk
         if dopusk is None:
             return "dopusk is none"
-        return
+        return 
     @classmethod
     async def get_dopusk_of_user(cls,student):
         dopusk = await cls.query.where(Dopusk_submissions.student == student).gino.all()
@@ -203,7 +203,7 @@ class Dopusk_submissions(db.Model):
 
 
 
-class Spravka_submissions(db.Model):
+class Spravka_submissions(db.Model): 
     __tablename__ = 'spravka_submissions'
     id:  int = db.Column(db.Integer, primary_key=True ,autoincrement=True)
     student: str =  db.Column(db.String,default='-')
@@ -230,11 +230,11 @@ class Spravka_submissions(db.Model):
         print(spravka)
         new_spravka_status = await spravka.update(status=new_status).apply()
         new_status_author = await spravka.update(status_author=status_author).apply()
-        return
+        return 
 
     @classmethod
     async def get_all(cls):
-        return await cls.query.gino.all()
+        return await cls.query.gino.all()    
     @classmethod
     async def get_spravka_of_user(cls,student):
         spravka = await cls.query.where(Spravka_submissions.student == student).gino.all()

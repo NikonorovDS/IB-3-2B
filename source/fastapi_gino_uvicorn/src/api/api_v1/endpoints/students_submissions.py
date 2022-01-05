@@ -15,7 +15,7 @@ import starlette.status as status
 from starlette.responses import HTMLResponse
 from schemas.models import User, UserCreate, UserUpdate, UserLogin
 from models.models import User as ORMUser
-from models.models import Cookies as ORMCookies
+from models.models import Cookies as ORMCookies  
 from gino import Gino
 import os
 from models.models import Dopusk_submissions as ORMDopusk_submissions
@@ -30,16 +30,14 @@ router = APIRouter()
 
 
 @router.post('/dopusk')
-async def create_dopusk(student =Form(...), teacher =Form(...), subject = Form(...),status_author="-") -> Any:
+async def create_dopusk(student =Form(...), teacher =Form(...), subject = Form(...),status_author : Optional[str] = Form(...)) -> Any:
     submission = await ORMDopusk_submissions.get_or_create_dopusk(student,subject,teacher,status_author)
-    response =  RedirectResponse('http://localhost/v1/users/create_dopusk',  status_code=status.HTTP_302_FOUND)
-    return response
+    return submission
 
 @router.post('/spravka')
 async def create_spravka(student = Form(...), way_point = Form(...), quantity = Form(...)) -> Any:
     submission = await ORMSpravka_submissions.get_or_create_spravka(student,way_point,int(quantity),'-')
-    response =  RedirectResponse('http://localhost/v1/users/create_spravka',  status_code=status.HTTP_302_FOUND)
-    return response
+    return submission.student, submission.way_point, submission.quantity, submission.status
 
 @router.get("/get_dopusk")
 async def get():
