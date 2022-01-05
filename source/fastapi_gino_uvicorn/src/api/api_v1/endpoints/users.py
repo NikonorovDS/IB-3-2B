@@ -193,9 +193,8 @@ async def create_user(login = Form(...),email = Form(...),phone = Form(...), rol
         userId = value['userId']
         role : ORMUser = await ORMUser.get_role(username = userId)
         if role == 'admin':
-            new_user : ORMUser = await ORMUser.create_user(login,email,phone,role,name,admission_year,course,direction,group,hostel,password)
-            
-         
+            new_user : ORMUser = await ORMUser.create_user(login,email,phone,role,name,admission_year,int(course),direction,group,hostel,password)
+        
             return RedirectResponse(
             'http://localhost:80/v1/users/main_admin',  status_code=status.HTTP_302_FOUND)
         else:
