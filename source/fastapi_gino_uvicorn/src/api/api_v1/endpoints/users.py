@@ -91,7 +91,12 @@ async def useradd_admin(request: Request,response: Response,CookieId: Optional[s
             return '404'
   #  return templates.TemplateResponse('useradd.html',{"request":request})
 
-
+@router.get('/create_spravka',response_class=HTMLResponse )
+async def main(request: Request,response: Response):
+    return templates.TemplateResponse('create_spravka.html',{"request":request})
+@router.get('/create_dopusk',response_class=HTMLResponse )
+async def main(request: Request,response: Response):
+    return templates.TemplateResponse('create_dopusk.html',{"request":request})
 
 
 @router.get('/start',response_class=HTMLResponse )
@@ -124,13 +129,12 @@ async def login(email = Form(...),password = Form(...),CookieId: Optional[str] =
                 response =  RedirectResponse(
                 'http://localhost:80/v1/users/main_admin',  status_code=status.HTTP_302_FOUND)
                 response.set_cookie(key="CookieId", value=value)
-            
+
                 return response
             else:
                 response =  RedirectResponse(
                 'http://localhost:80/v1/users/main',  status_code=status.HTTP_302_FOUND)
                 response.set_cookie(key="CookieId", value=value)
-            
                 return response
         else:
             return RedirectResponse(
@@ -149,7 +153,7 @@ async def desauth(request: Request,response: Response,CookieId: Optional[str] = 
     delete : ORMCookies = await ORMCookies.delete_cookie(value=CookieId)
     return response
 
-    
+
 
 @router.get('/login_test/{username}')
 async def test_login(username: str,password:str ,response: Request)-> Any:
@@ -193,8 +197,14 @@ async def create_user(login = Form(...),email = Form(...),phone = Form(...), rol
         userId = value['userId']
         role : ORMUser = await ORMUser.get_role(username = userId)
         if role == 'admin':
+<<<<<<< Updated upstream
             new_user : ORMUser = await ORMUser.create_user(login,email,phone,role,name,admission_year,int(course),direction,group,hostel,password)
         
+=======
+            new_user : ORMUser = await ORMUser.create_user(login,email,phone,role,name,admission_year,course,direction,group,hostel,password)
+
+
+>>>>>>> Stashed changes
             return RedirectResponse(
             'http://localhost:80/v1/users/main_admin',  status_code=status.HTTP_302_FOUND)
         else:
@@ -241,4 +251,3 @@ async def check_cookie(CookieId) -> Any:
     value = check["__values__"]
     userId = value['userId']
     role : ORMUser = await ORMUser.get_role(username = userId)
-    
