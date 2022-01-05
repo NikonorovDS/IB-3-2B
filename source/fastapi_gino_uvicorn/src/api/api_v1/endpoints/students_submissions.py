@@ -60,7 +60,7 @@ async def update_status(student = Form(...), way_point = Form(...), quantity = F
     return status
 
 
-@router.get('/get_dopusk')
+@router.get('/get_dopusk_of_user')
 async def get_dopusk(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)) -> Any:
     if CookieId is None:
         response =  RedirectResponse(
@@ -76,7 +76,7 @@ async def get_dopusk(request: Request,response: Response,CookieId: Optional[str]
         name = value['name']
         dopusk: ORMDopusk_submissions = await ORMDopusk_submissions.get_dopusk_of_user(student = name)
         return dopusk
-@router.get('/get_spravka')
+@router.get('/get_spravka_of_user')
 async def get_spravka(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)) -> Any:
     if CookieId is None:
         response =  RedirectResponse(
