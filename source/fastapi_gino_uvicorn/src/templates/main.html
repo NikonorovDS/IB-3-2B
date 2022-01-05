@@ -10,7 +10,7 @@
   <div class="header">
       <div class="header-line">
         <div class="logo">
-            <a href="http://localhost:80/v1/users/start" method="get"><img src="{{ url_for('static', path='/photo/logo.png') }}" alt="logo"></a>
+            <a href="http://localhost:80/v1/users/login" method="get"><img src="{{ url_for('static', path='/photo/logo.png') }}" alt="logo"></a>
         </div>
       <a href="http://localhost:80/v1/users/login/desauth" method="get">
         <button class="button_exit">Выход</button>
@@ -18,11 +18,17 @@
       </div>
   </div>
   <div class="case">
-    <form action="http://localhost:80/v1/users/main_admin" method="post">
+    <form action="http://localhost:80/v1/users/create_dopusk" method="get">
       <button class="button1">Заказать допуск</button>
     </form>
-    <form action="http://localhost:80/v1/users/main2" method="post">
+    <form action="http://localhost:80/v1/users/main_admin" method="get">
+      <button class="button1">Проверить статус допуска</button>
+    </form>
+    <form action="http://localhost:80/v1/users/create_spravka" method="get">
       <button class="button2">Заказать справку</button>
+    </form>
+    <form action="http://localhost:80/v1/users/main_admin" method="get">
+      <button class="button1">Проверить статус справки</button>
     </form>
   </div>
 </body>

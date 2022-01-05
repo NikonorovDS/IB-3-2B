@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link href="{{ url_for('static', path='/css/main.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', path='/css/useradd.css') }}" rel="stylesheet">
     <title>Main</title>
 
 </head>
@@ -18,14 +18,11 @@
       </div>
   </div>
   <div class="case">
-    <form action="http://localhost:80/v1/users/main1" method="post">
-      <button class="button1">Допуск</button>
-    </form>
-    <form action="http://localhost:80/v1/users/main2" method="post">
-      <button class="button2">Справка</button>
-    </form>
-    <form action="http://localhost:80/v1/users/useradd" method="post">
-      <button class="button2">Создание юзера</button>
+    <form action="http://localhost:80/v1/submissions/dopusk" method="post">
+      <input type="text" name="student" placeholder="ФИО">
+      <input type="text" name="teacher" placeholder="ФИО преаодавателя">
+      <input type="text" name="subject" placeholder="Название предмета">
+      <button class="button">Создать</button>
     </form>
   </div>
 </body>
