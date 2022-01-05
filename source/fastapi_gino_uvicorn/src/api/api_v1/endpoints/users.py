@@ -51,20 +51,45 @@ async def read_users(
 
 
 
-
+#
 
 
 @router.get('/main',response_class=HTMLResponse )
-async def start(request: Request,response: Response):
+async def main(request: Request,response: Response):
     return templates.TemplateResponse('main.html',{"request":request})
 
-@router.post('/main_admin',response_class=HTMLResponse )
-async def start(request: Request,response: Response):
-    return templates.TemplateResponse('main_admin.html',{"request":request})
+@router.get('/main_admin')
+async def main_admin(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)):
+    if CookieId is None:
+        response =  RedirectResponse(
+            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+    else:
+        check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
+        check = check.__dict__
+        value = check["__values__"]
+        userId = value['userId']
+        role : ORMUser = await ORMUser.get_role(username = userId)
+        if role == 'admin':
+            return templates.TemplateResponse('main_admin.html',{"request":request})
+        else:
+            return '404'
 
 @router.post('/useradd',response_class=HTMLResponse )
-async def start(request: Request,response: Response):
-    return templates.TemplateResponse('useradd.html',{"request":request})
+async def useradd_admin(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)):
+    if CookieId is None:
+        response =  RedirectResponse(
+            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+    else:
+        check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
+        check = check.__dict__
+        value = check["__values__"]
+        userId = value['userId']
+        role : ORMUser = await ORMUser.get_role(username = userId)
+        if role == 'admin':
+            return templates.TemplateResponse('useradd.html',{"request":request})
+        else:
+            return '404'
+  #  return templates.TemplateResponse('useradd.html',{"request":request})
 
 
 
@@ -94,11 +119,22 @@ async def login(email = Form(...),password = Form(...),CookieId: Optional[str] =
             response = JSONResponse(content=content)
             add_cookies : ORMCookies = await ORMCookies.get_or_create(userId=username,value=value)
             print(add_cookies.__dict__)
-            response.set_cookie(key="CookieId", value=value)
-            return response
+            role : ORMUser = await ORMUser.get_role(username = email)
+            if role == 'admin':
+                response =  RedirectResponse(
+                'http://localhost:80/v1/users/main_admin',  status_code=status.HTTP_302_FOUND)
+                response.set_cookie(key="CookieId", value=value)
+            
+                return response
+            else:
+                response =  RedirectResponse(
+                'http://localhost:80/v1/users/main',  status_code=status.HTTP_302_FOUND)
+                response.set_cookie(key="CookieId", value=value)
+            
+                return response
         else:
             return RedirectResponse(
-            'http://localhost:80/v1/users/main',  status_code=status.HTTP_302_FOUND)
+            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
     elif CookieId is not None:
         check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
         if check == 504:
@@ -106,10 +142,13 @@ async def login(email = Form(...),password = Form(...),CookieId: Optional[str] =
             'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
         return{'meesage':'Your cookies is True'}
 @router.get('/login/desauth')
-async def desauth(response: Response,CookieId: Optional[str] = Cookie(None)) -> Any:
-    RedirectResponse.delete_cookie("CookieId")
-    return RedirectResponse(
-            'http://localhost:80/v1/users/main',  status_code=status.HTTP_302_FOUND)
+async def desauth(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)) -> Any:
+    response =  RedirectResponse(
+            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+    response.delete_cookie("CookieId")
+    delete : ORMCookies = await ORMCookies.delete_cookie(value=CookieId)
+    return response
+
     
 
 @router.get('/login_test/{username}')
@@ -135,16 +174,31 @@ async def read_cookies(CookieId: Optional[str] = Cookie(None)) -> Any:
     name = check.userId
     return name
 
-@router.post('/')
-async def create_user(
-    request : UserCreate
-) -> Any:
+@router.post('/create_user')
+async def create_user(login = Form(...),email = Form(...),phone = Form(...), role = Form(...),name = Form(...),admission_year = Form(...),
+    course = Form(...),direction = Form(...),group =Form(...),hostel = Form(...),password = Form(...),CookieId: Optional[str] = Cookie(None)) -> Any:
     """
     Create user
     """
-    print(request.dict())
-    new_user : ORMUser = await ORMUser.create_user(**request.dict())
-    return 'ok'
+    response= Response
+    if CookieId is None:
+        response =  RedirectResponse(
+            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+        return response
+    else:
+        check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
+        check = check.__dict__
+        value = check["__values__"]
+        userId = value['userId']
+        role : ORMUser = await ORMUser.get_role(username = userId)
+        if role == 'admin':
+            new_user : ORMUser = await ORMUser.create_user(login,email,phone,role,name,admission_year,course,direction,group,hostel,password)
+            
+         
+            return RedirectResponse(
+            'http://localhost:80/v1/users/main_admin',  status_code=status.HTTP_302_FOUND)
+        else:
+            return '404'
 
 
 # @router.get('/{id}', response_model=User)
@@ -172,3 +226,19 @@ async def update_user(
     updated_fields : User = User.from_orm(request)
     await user.update(**updated_fields.dict(skip_defaults=True)).apply()
     return User.from_orm(user)
+
+
+
+
+
+
+
+
+
+async def check_cookie(CookieId) -> Any:
+    check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
+    check = check.__dict__
+    value = check["__values__"]
+    userId = value['userId']
+    role : ORMUser = await ORMUser.get_role(username = userId)
+    

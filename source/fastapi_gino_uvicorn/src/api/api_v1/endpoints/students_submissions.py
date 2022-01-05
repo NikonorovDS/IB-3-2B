@@ -58,3 +58,37 @@ async def get():
 async def update_status(student = Form(...), way_point = Form(...), quantity = Form(...),new_status = Form(...),status_author = Form(...)) -> Any:
     status = await ORMSpravka_submissions.update_status(student,way_point,int(quantity),new_status,status_author)
     return status
+
+
+@router.get('/get_dopusk')
+async def get_dopusk(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)) -> Any:
+    if CookieId is None:
+        response =  RedirectResponse(
+            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+    else:
+        check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
+        check = check.__dict__
+        value = check["__values__"]
+        userId = value['userId']
+        user: ORMUser = await ORMUser.get_user_for_email(email = userId)
+        user = user.__dict__
+        value = user['__values__']
+        name = value['name']
+        dopusk: ORMDopusk_submissions = await ORMDopusk_submissions.get_dopusk_of_user(student = name)
+        return dopusk
+@router.get('/get_spravka')
+async def get_spravka(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)) -> Any:
+    if CookieId is None:
+        response =  RedirectResponse(
+            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+    else:
+        check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
+        check = check.__dict__
+        value = check["__values__"]
+        userId = value['userId']
+        user: ORMUser = await ORMUser.get_user_for_email(email = userId)
+        user = user.__dict__
+        value = user['__values__']
+        name = value['name']
+        spravka: ORMSpravka_submissions = await ORMSpravka_submissions.get_spravka_of_user(student = name)
+        return spravka

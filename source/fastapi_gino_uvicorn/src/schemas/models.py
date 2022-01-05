@@ -12,20 +12,21 @@ from pydantic.types import ByteSize
 
 class UserBase(BaseModel):
    # id: int
+    login: str
     email: str 
     phone: str
     role: str 
     name: str 
-    admission_year: str  
+    admission_year: str 
     course: Optional[int] 
     direction: Optional[str] 
     group: Optional[str]
     hostel: Optional[str] 
     password: Optional[str] 
     
-    
 class UserCreate(UserBase):
    # id: int
+    login: str
     email: str 
     phone: str
     role: str 
@@ -42,6 +43,7 @@ class UserUpdate(UserBase):
 #DATABASE BASE
 class User(UserBase):
     #id: int
+    login: str
     email: str 
     phone: str
     role: str 

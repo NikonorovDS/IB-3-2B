@@ -36,11 +36,12 @@ class User(db.Model) :
     hostel: str = db.Column(db.String,default='-')
     password: str = db.Column(db.String,default='-')
     @classmethod
-    async def create_user(cls,email,phone,role,name, admission_year, course,direction,group,hostel,password) -> "User":
+    async def create_user(cls,login,email,phone,role,name, admission_year, course,direction,group,hostel,password) -> "User":
         hash_password = hashlib.sha256(password.encode())
-        user = await cls.create(email=email,phone=phone,role=role,name=name, 
+        user = await cls.create(login=login,email=email,phone=phone,role=role,name=name, 
         admission_year=admission_year, course=course,direction=direction,group=group
         ,hostel=hostel,password=str(hash_password.hexdigest()))
+        return user
     @classmethod
     async def check_password(cls,email,password)-> "User":
         pass_user = await User.query.where(User.email==email).gino.first()
@@ -52,6 +53,15 @@ class User(db.Model) :
                 return False
         else: 
             return False
+    @classmethod
+    async def get_role(cls,username) -> "User": 
+        user = await cls.query.where(User.email == username).gino.first()
+        role = user.role
+        return role
+    @classmethod
+    async def get_user_for_email(cls,email) -> "User":
+        user = await cls.query.where(User.email == email).gino.first()
+        return user 
 class Messages(db.Model):
     __tablename__ = 'messages'
     id:  int = db.Column(db.Integer, primary_key=True,autoincrement=True)
@@ -108,7 +118,7 @@ class Cookies(db.Model):
             return await cls.create(value=value,userId=userId,date=date)
         else:
             #print(cookie_token.__dict__)
-
+            return await cookie_token
             datetimes = cookie_token.__dict__
             datetimes = datetimes["__values__"]
             datetimes = datetimes["date"]
@@ -140,6 +150,10 @@ class Cookies(db.Model):
             period = date - date_cookies
             if int(period.days) > 7:
                 await cls.delete.where(Cookies.value == i.value).gino.status()
+    @classmethod 
+    async def delete_cookie(cls,value) -> "Cookies":
+        ##cls.delete.where(Cookies.value == value).gino.status()
+        return await cls.delete.where(Cookies.value == value).gino.status()
                 
 
 class Dopusk_submissions(db.Model): 
@@ -179,7 +193,10 @@ class Dopusk_submissions(db.Model):
         if dopusk is None:
             return "dopusk is none"
         return 
-        
+    @classmethod
+    async def get_dopusk_of_user(cls,student):
+        dopusk = await cls.query.where(Dopusk_submissions.student == student).gino.all()
+        return dopusk
     @classmethod
     async def get_all(cls):
         return await cls.query.gino.all()
@@ -218,3 +235,7 @@ class Spravka_submissions(db.Model):
     @classmethod
     async def get_all(cls):
         return await cls.query.gino.all()    
+    @classmethod
+    async def get_spravka_of_user(cls,student):
+        spravka = await cls.query.where(Spravka_submissions.student == student).gino.all()
+        return spravka
