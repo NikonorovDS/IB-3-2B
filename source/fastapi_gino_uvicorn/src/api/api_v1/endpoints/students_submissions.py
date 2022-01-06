@@ -15,7 +15,7 @@ import starlette.status as status
 from starlette.responses import HTMLResponse
 from schemas.models import User, UserCreate, UserUpdate, UserLogin
 from models.models import User as ORMUser
-from models.models import Cookies as ORMCookies  
+from models.models import Cookies as ORMCookies
 from gino import Gino
 import os
 from models.models import Dopusk_submissions as ORMDopusk_submissions
@@ -30,14 +30,16 @@ router = APIRouter()
 
 
 @router.post('/dopusk')
-async def create_dopusk(student , teacher , subject ,status_author) -> Any:
+async def create_dopusk(student =Form(...), teacher =Form(...), subject = Form(...),status_author="-") -> Any:
     submission = await ORMDopusk_submissions.get_or_create_dopusk(student,subject,teacher,status_author)
-    return submission
+    response =  RedirectResponse('http://localhost/v1/users/create_dopusk',  status_code=status.HTTP_302_FOUND)
+    return response
 
 @router.post('/spravka')
 async def create_spravka(student, way_point, quantity) -> Any:
     submission = await ORMSpravka_submissions.get_or_create_spravka(student,way_point,int(quantity),'-')
-    return submission.student, submission.way_point, submission.quantity, submission.status
+    response =  RedirectResponse('http://localhost/v1/users/create_spravka',  status_code=status.HTTP_302_FOUND)
+    return response
 
 @router.get("/get_dopusk")
 async def get():
@@ -60,7 +62,7 @@ async def update_status(student , way_point , quantity ,new_status ,status_autho
     return status
 
 
-@router.get('/get_dopusk_of_user')
+@router.get('/get_dopusk')
 async def get_dopusk(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)) -> Any:
     if CookieId is None:
         response =  RedirectResponse(
@@ -76,7 +78,7 @@ async def get_dopusk(request: Request,response: Response,CookieId: Optional[str]
         name = value['name']
         dopusk: ORMDopusk_submissions = await ORMDopusk_submissions.get_dopusk_of_user(student = name)
         return dopusk
-@router.get('/get_spravka_of_user')
+@router.get('/get_spravka')
 async def get_spravka(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)) -> Any:
     if CookieId is None:
         response =  RedirectResponse(
