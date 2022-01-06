@@ -180,8 +180,8 @@ async def read_cookies(CookieId: Optional[str] = Cookie(None)) -> Any:
 
 @router.post('/create_user')
 async def create_user(login = Form(...),email = Form(...),phone = Form(...), role = Form(...),name = Form(...),admission_year = Form(...),
-    course = Form(...),direction = Form(...),group =Form(...),hostel = Form(...),password = Form(...),CookieId: Optional[str] = Cookie(None)) -> Any:
-    new_user : ORMUser = await ORMUser.create_user(login,email,phone,role,name,admission_year,int(course),direction,group,hostel,password)
+    course = Form(...),direction = Form(...),group =Form(...),hostel = Form(...),password = Form(...),zachetkaid=Form(...),CookieId: Optional[str] = Cookie(None)) -> Any:
+    new_user : ORMUser = await ORMUser.create_user(login,email,phone,role,name,admission_year,int(course),direction,group,hostel,password,zachetkaid)
 #    """
 #    Create user
 #    """

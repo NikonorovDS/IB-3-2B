@@ -37,11 +37,11 @@ class User(db.Model) :
     password: str = db.Column(db.String,default='-')
     zachetkaid : str = db.Column(db.String,default='-')
     @classmethod
-    async def create_user(cls,login,email,phone,role,name, admission_year, course,direction,group,hostel,password) -> "User":
+    async def create_user(cls,login,email,phone,role,name, admission_year, course,direction,group,hostel,password,zachetkaid) -> "User":
         hash_password = hashlib.sha256(password.encode())
-        # if role == 'student':
-        #     zachetkaid = await Zachetka.create_zachetka(userId=email,name=name)
-        #     zachetkaid = zachetkaid.zachetkaid
+        if role == 'student':
+            zachetkaid = await Zachetka.create_zachetka(zachetkaid,userId=email,name=name)
+            #zachetkaid = zachetkaid.zachetkaid
         user = await cls.create(login=login,email=email,phone=phone,role=role,name=name, 
         admission_year=admission_year, course=course,direction=direction,group=group
         ,hostel=hostel,password=str(hash_password.hexdigest()))
@@ -249,12 +249,12 @@ class Spravka_submissions(db.Model):
 
 class Zachetka(db.Model):
     __tablename__ = 'zachetka'
-    id : int = db.Column(db.String, primary_key=True)
+    id : int = db.Column(db.Integer, primary_key=True)
     userId: str = db.Column(db.String)
     name: str = db.Column(db.String)
     @classmethod
-    async def create_zachetka(cls,userId,name):
-        return await cls.create(userId=userId,name=name)
+    async def create_zachetka(cls,id,userId,name):
+        return await cls.create(id,userId=userId,name=name)
     @classmethod
     async def get_zachetka_name(cls,name):
         return cls.query.where(Zachetka.name==name).gino.first()
@@ -291,7 +291,8 @@ class Subject(db.Model):
         return await Subject.create(teacher=teacher,group=group,subjects=subjects)
     @classmethod
     async def get_students(cls,id) -> "Subject":
-        group = cls.get(id)
+        group = await cls.get(int(id))
+        
         group = group.group
         students = await User.query.where(User.role == 'student'and User.group == group).gino.all()
         return students
