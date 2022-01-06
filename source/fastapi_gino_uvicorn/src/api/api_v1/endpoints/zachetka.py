@@ -34,7 +34,7 @@ async def start(request: Request,response: Response,CookieId: Optional[str] = Co
         response = templates.TemplateResponse('login.html',{"request":request})
         response.delete_cookie("CookieId")
         return response
-@router.post('/crateSubcect')
+@router.post('/crateSubject')
 async def createSubject(teacher=Form(...),group=Form(...),subject=Form(...))-> Any:
     create_subject: ORMSubject = await ORMSubject.create_s(teacher,group,subject)
     return create_subject
@@ -55,3 +55,15 @@ async def get_subjects(teacher,CookieId: Optional[str] = Cookie(None)) -> Any:
 async def create(zachetkaid,teacher,subject,semestr,note)-> Any:
     note : ORMNotes = await ORMNotes.create_note(zachetkaid,teacher,subject,semestr,note)
     return note
+@router.get('/get_my_notes')
+async def get_my_notes(CookieId: Optional[str] = Cookie(None))-> Any:
+    check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
+    check = check.__dict__
+    value = check["__values__"]
+    userId = value['userId']
+    zachetkaid : ORMZachetka = await ORMZachetka.get_zachetka_userId(userId = userId)
+    zachetkaid = zachetkaid.__dict__
+    zachetkaid = zachetkaid["__values__"]
+    zachetkaid = zachetkaid["id"]
+    my_notes: ORMNotes = await ORMNotes.get_notes_of_zachetka(zachetkaid = zachetkaid)
+    return my_notes

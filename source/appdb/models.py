@@ -253,8 +253,8 @@ class Zachetka(db.Model):
     userId: str = db.Column(db.String)
     name: str = db.Column(db.String)
     @classmethod
-    async def create_zachetka(cls,id,userId,name):
-        return await cls.create(id,userId=userId,name=name)
+    async def create_zachetka(cls,idz,userId,name):
+        return await cls.create(id=int(idz),userId=userId,name=name)
     @classmethod
     async def get_zachetka_name(cls,name):
         return cls.query.where(Zachetka.name==name).gino.first()
@@ -279,6 +279,9 @@ class Notes(db.Model):
         student = await User.query.where(User.name == name).gino.first()
         zachetkaid = student.zachetkaid 
         return await cls.create(zachetkaid=zachetkaid,teacher=teacher,subject=subject,semestr=semestr,note=note)
+    @classmethod
+    async def get_notes_of_zachetka(cls,zachetkaid):
+        return await cls.query.where(Notes.zachetkaid == zachetkaid).gino.all()
 
 class Subject(db.Model):
     __tablename__ = 'subject'

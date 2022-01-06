@@ -55,11 +55,7 @@ async def read_users(
 
 
 @router.get('/main',response_class=HTMLResponse )
-async def main(request: Request,response: Response):
-    return templates.TemplateResponse('main.html',{"request":request})
-
-@router.get('/main_admin')
-async def main_admin(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)):
+async def main(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)):
     if CookieId is None:
         response =  RedirectResponse(
             'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
@@ -72,7 +68,23 @@ async def main_admin(request: Request,response: Response,CookieId: Optional[str]
         if role == 'admin':
             return templates.TemplateResponse('main_admin.html',{"request":request})
         else:
-            return '404'
+            return templates.TemplateResponse('main.html',{"request":request})
+
+# @router.get('/main_admin')
+# async def main_admin(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)):
+#     if CookieId is None:
+#         response =  RedirectResponse(
+#             'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+#     else:
+#         check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
+#         check = check.__dict__
+#         value = check["__values__"]
+#         userId = value['userId']
+#         role : ORMUser = await ORMUser.get_role(username = userId)
+#         if role == 'admin':
+#             return templates.TemplateResponse('main_admin.html',{"request":request})
+#         else:
+#             return '404'
 
 @router.post('/useradd',response_class=HTMLResponse )
 async def useradd_admin(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)):
@@ -124,18 +136,10 @@ async def login(email = Form(...),password = Form(...),CookieId: Optional[str] =
             response = JSONResponse(content=content)
             add_cookies : ORMCookies = await ORMCookies.get_or_create(userId=username,value=value)
             print(add_cookies.__dict__)
-            role : ORMUser = await ORMUser.get_role(username = email)
-            if role == 'admin':
-                response =  RedirectResponse(
-                'http://localhost:80/v1/users/main_admin',  status_code=status.HTTP_302_FOUND)
-                response.set_cookie(key="CookieId", value=value)
-
-                return response
-            else:
-                response =  RedirectResponse(
+            response =  RedirectResponse(
                 'http://localhost:80/v1/users/main',  status_code=status.HTTP_302_FOUND)
-                response.set_cookie(key="CookieId", value=value)
-                return response
+            response.set_cookie(key="CookieId", value=value)
+            return response
         else:
             return RedirectResponse(
             'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
