@@ -39,12 +39,12 @@ class User(db.Model) :
     @classmethod
     async def create_user(cls,login,email,phone,role,name, admission_year, course,direction,group,hostel,password) -> "User":
         hash_password = hashlib.sha256(password.encode())
-        if role == 'student':
-            zachetkaid = await Zachetka.create_zachetka(userId=email,name=name)
-            zachetkaid = zachetkaid.zachetkaid
+        # if role == 'student':
+        #     zachetkaid = await Zachetka.create_zachetka(userId=email,name=name)
+        #     zachetkaid = zachetkaid.zachetkaid
         user = await cls.create(login=login,email=email,phone=phone,role=role,name=name, 
         admission_year=admission_year, course=course,direction=direction,group=group
-        ,hostel=hostel,password=str(hash_password.hexdigest(),),zachetkaid=zachetkaid)
+        ,hostel=hostel,password=str(hash_password.hexdigest()))
         
         return user
     @classmethod
