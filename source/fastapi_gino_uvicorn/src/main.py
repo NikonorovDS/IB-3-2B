@@ -38,7 +38,7 @@ db.init_app(app)
     # The auth cookie is split toЯ ensure JS doesn't have full access (http_only), so we have to recreate it
     
     
-from api.api_v1.api import usersRouter, pagesRouter, submissionsRouter,dialogsRouter
+from api.api_v1.api import usersRouter, pagesRouter, submissionsRouter,dialogsRouter,zachetkaRouter
 
 app.include_router(usersRouter, prefix=settings.API_VERSION_STR, tags=['Users'])
 
@@ -47,3 +47,5 @@ app.include_router(pagesRouter, prefix=settings.API_VERSION_STR, tags=['Pages'])
 app.include_router(dialogsRouter, prefix=settings.API_VERSION_STR, tags=['Dialogs'])
 
 app.include_router(submissionsRouter, prefix=settings.API_VERSION_STR, tags=['Submissions'])
+
+app.include_router(zachetkaRouter, prefix=settings.API_VERSION_STR, tags=['Zachetka'])

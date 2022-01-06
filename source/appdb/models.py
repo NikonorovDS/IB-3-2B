@@ -35,12 +35,17 @@ class User(db.Model) :
     group: str = db.Column(db.String,default='-')
     hostel: str = db.Column(db.String,default='-')
     password: str = db.Column(db.String,default='-')
+    zachetkaid : str = db.Column(db.String,default='-')
     @classmethod
     async def create_user(cls,login,email,phone,role,name, admission_year, course,direction,group,hostel,password) -> "User":
         hash_password = hashlib.sha256(password.encode())
+        if role == 'student':
+            zachetkaid = await Zachetka.create_zachetka(userId=email,name=name)
+            zachetkaid = zachetkaid.zachetkaid
         user = await cls.create(login=login,email=email,phone=phone,role=role,name=name, 
         admission_year=admission_year, course=course,direction=direction,group=group
-        ,hostel=hostel,password=str(hash_password.hexdigest()))
+        ,hostel=hostel,password=str(hash_password.hexdigest(),),zachetkaid=zachetkaid)
+        
         return user
     @classmethod
     async def check_password(cls,email,password)-> "User":
@@ -239,3 +244,57 @@ class Spravka_submissions(db.Model):
     async def get_spravka_of_user(cls,student):
         spravka = await cls.query.where(Spravka_submissions.student == student).gino.all()
         return spravka
+
+
+
+class Zachetka(db.Model):
+    __tablename__ = 'zachetka'
+    id : int = db.Column(db.String, primary_key=True)
+    userId: str = db.Column(db.String)
+    name: str = db.Column(db.String)
+    @classmethod
+    async def create_zachetka(cls,userId,name):
+        return await cls.create(userId=userId,name=name)
+    @classmethod
+    async def get_zachetka_name(cls,name):
+        return cls.query.where(Zachetka.name==name).gino.first()
+    @classmethod 
+    async def get_zachetka_userId(cls,userId):
+        return cls.query.where(Zachetka.userId == userId).gino.first()
+    
+class Notes(db.Model):
+    __tablename__ = 'notes'
+    id : int =  db.Column(db.Integer, primary_key=True ,autoincrement=True)
+    zachetkaid: int = db.Column(db.Integer)
+    teacher: str =  db.Column(db.String,default='-')
+    subject: str =  db.Column(db.String,default='-')
+    semestr: str =  db.Column(db.String,default='-')
+    note: str =  db.Column(db.String,default='-')
+
+    @classmethod
+    async def create_note(cls,zachetkaid,teacher,subject,semestr,note):
+        return await cls.create(zachetkaid=zachetkaid,teacher=teacher,subject=subject,semestr=semestr,note=note)
+    @classmethod
+    async def create_note_name(cls,name,teacher,subject,semestr,note):
+        student = await User.query.where(User.name == name).gino.first()
+        zachetkaid = student.zachetkaid 
+        return await cls.create(zachetkaid=zachetkaid,teacher=teacher,subject=subject,semestr=semestr,note=note)
+
+class Subject(db.Model):
+    __tablename__ = 'subject'
+    id : int =  db.Column(db.Integer, primary_key=True ,autoincrement=True)
+    teacher: str =  db.Column(db.String,default='-')
+    group: str =  db.Column(db.String,default='-')
+    subjects: str =  db.Column(db.String,default='-')
+    @classmethod
+    async def create_s(cls,teacher,group,subjects) -> "Subject":
+        return await Subject.create(teacher=teacher,group=group,subjects=subjects)
+    @classmethod
+    async def get_students(cls,id) -> "Subject":
+        group = cls.get(id)
+        group = group.group
+        students = await User.query.where(User.role == 'student'and User.group == group).gino.all()
+        return students
+    @classmethod
+    async def get_subjects(cls,teacher):
+        return await cls.query.where(Subject.teacher == teacher).gino.all()
