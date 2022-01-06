@@ -36,7 +36,7 @@ async def create_dopusk(student =Form(...), teacher =Form(...), subject = Form(.
     return response
 
 @router.post('/spravka')
-async def create_spravka(student = Form(...), way_point = Form(...), quantity = Form(...)) -> Any:
+async def create_spravka(student, way_point, quantity) -> Any:
     submission = await ORMSpravka_submissions.get_or_create_spravka(student,way_point,int(quantity),'-')
     response =  RedirectResponse('http://localhost/v1/users/create_spravka',  status_code=status.HTTP_302_FOUND)
     return response
@@ -47,7 +47,7 @@ async def get():
     return pop
 
 @router.post('/update__dopusk_status')
-async def update_status(student = Form(...), teacher = Form(...), subject = Form(...), new_status = Form(...), status_author = Form(...)) -> Any:
+async def update_status(student , teacher , subject , new_status , status_author ) -> Any:
     status = await ORMDopusk_submissions.update_status(student,subject,teacher,new_status,status_author)
     return status
 
@@ -57,7 +57,7 @@ async def get():
     return pop
 
 @router.post('/update_spravka_status')
-async def update_status(student = Form(...), way_point = Form(...), quantity = Form(...),new_status = Form(...),status_author = Form(...)) -> Any:
+async def update_status(student , way_point , quantity ,new_status ,status_author ) -> Any:
     status = await ORMSpravka_submissions.update_status(student,way_point,int(quantity),new_status,status_author)
     return status
 
