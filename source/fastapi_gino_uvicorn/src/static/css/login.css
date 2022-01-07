@@ -64,11 +64,6 @@ input {
   background-color: rgba(124, 160, 251, 1);
   align-self: stretch;
 }
-.false_insert {
-  color: red;
-  text-align: center;
-  font-size: 30px;
-}
 .icon_cancel {
   width: 30px;
   height: 30px;
