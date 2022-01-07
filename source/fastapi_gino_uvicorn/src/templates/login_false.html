@@ -16,11 +16,11 @@
       </div>
   </div>
   <div class="case">
+    <div class="false"><img src="{{ url_for('static', path='/photo/cancel.png') }}" class="icon_cancel" alt="icon">Логин или пароль введен не верно.</div>
     <form action="http://localhost:80/v1/users/login" method="post">
       <div class="text">Войдите</div>
       <input type="mail" name="email" placeholder="Login">
       <input type="password" name="password" placeholder="Passwrod">
-      <div class="false_insert">Логин или пароль введен не верно.</div>
       <button class="button">Вход</button>
     </form>
   </div>

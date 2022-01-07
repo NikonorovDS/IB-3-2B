@@ -115,6 +115,15 @@ async def main(request: Request,response: Response):
 @router.get('/create_spravka_accept',response_class=HTMLResponse )
 async def main(request: Request,response: Response):
     return templates.TemplateResponse('create_spravka_accept.html',{"request":request})
+@router.get('/status_dopusk',response_class=HTMLResponse )
+async def main(request: Request,response: Response):
+    return templates.TemplateResponse('status_dopusk',{"request":request})
+@router.get('/status_spravka',response_class=HTMLResponse )
+async def main(request: Request,response: Response):
+    return templates.TemplateResponse('status_spravka.html',{"request":request})
+@router.get('/login_false',response_class=HTMLResponse )
+async def main(request: Request,response: Response):
+    return templates.TemplateResponse('login_false.html',{"request":request})
 
 
 @router.get('/start',response_class=HTMLResponse )

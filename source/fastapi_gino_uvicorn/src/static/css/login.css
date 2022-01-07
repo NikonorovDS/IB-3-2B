@@ -51,11 +51,6 @@ input {
   border-style: solid;
   background-color: rgba(252, 252, 252, 1);
 }
-.false_insert{
-  color: red;
-  text-align: center;
-  font-size: 30px;
-}
 .button {
   margin-top: 20px;
   position:relative;
@@ -68,4 +63,18 @@ input {
   font-size: 19px;
   background-color: rgba(124, 160, 251, 1);
   align-self: stretch;
+}
+.false_insert {
+  color: red;
+  text-align: center;
+  font-size: 30px;
+}
+.icon_cancel {
+  width: 30px;
+  height: 30px;
+}
+.false {
+  color: red;
+  text-align: center;
+  font-size: 30px;
 }
