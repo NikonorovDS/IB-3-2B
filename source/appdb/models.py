@@ -40,11 +40,11 @@ class User(db.Model) :
     async def create_user(cls,login,email,phone,role,name, admission_year, course,direction,group,hostel,password,zachetkaid) -> "User":
         hash_password = hashlib.sha256(password.encode())
         if role == 'student':
-            zachetkaid = await Zachetka.create_zachetka(zachetkaid,userId=email,name=name)
+            await Zachetka.create_zachetka(zachetkaid=zachetkaid,userId=email,name=name)
             #zachetkaid = zachetkaid.zachetkaid
         user = await cls.create(login=login,email=email,phone=phone,role=role,name=name, 
         admission_year=admission_year, course=course,direction=direction,group=group
-        ,hostel=hostel,password=str(hash_password.hexdigest()))
+        ,hostel=hostel,password=str(hash_password.hexdigest()),zachetkaid=zachetkaid)
         
         return user
     @classmethod
@@ -253,8 +253,8 @@ class Zachetka(db.Model):
     userId: str = db.Column(db.String)
     name: str = db.Column(db.String)
     @classmethod
-    async def create_zachetka(cls,idz,userId,name):
-        return await cls.create(id=int(idz),userId=userId,name=name)
+    async def create_zachetka(cls,zachetkaid,userId,name):
+        return await cls.create(id=int(zachetkaid),userId=userId,name=name)
     @classmethod
     async def get_zachetka_name(cls,name):
         return cls.query.where(Zachetka.name==name).gino.first()
@@ -273,15 +273,16 @@ class Notes(db.Model):
 
     @classmethod
     async def create_note(cls,zachetkaid,teacher,subject,semestr,note):
-        return await cls.create(zachetkaid=zachetkaid,teacher=teacher,subject=subject,semestr=semestr,note=note)
+        return await cls.create(zachetkaid=int(zachetkaid),teacher=teacher,subject=subject,semestr=semestr,note=note)
     @classmethod
     async def create_note_name(cls,name,teacher,subject,semestr,note):
         student = await User.query.where(User.name == name).gino.first()
         zachetkaid = student.zachetkaid 
-        return await cls.create(zachetkaid=zachetkaid,teacher=teacher,subject=subject,semestr=semestr,note=note)
+        return await cls.create(zachetkaid=int(zachetkaid),teacher=teacher,subject=subject,semestr=semestr,note=note)
     @classmethod
-    async def get_notes_of_zachetka(cls,zachetkaid):
-        return await cls.query.where(Notes.zachetkaid == zachetkaid).gino.all()
+    async def get_notes_of_zachetka(cls,zachetkaid)-> "Notes":
+        notes = await cls.query.where(Notes.zachetkaid == int(zachetkaid)).gino.all()
+        return notes
 
 class Subject(db.Model):
     __tablename__ = 'subject'
@@ -300,5 +301,5 @@ class Subject(db.Model):
         students = await User.query.where(User.role == 'student'and User.group == group).gino.all()
         return students
     @classmethod
-    async def get_subjects(cls,teacher):
+    async def get_subjects(cls,teacher): 
         return await cls.query.where(Subject.teacher == teacher).gino.all()

@@ -9,7 +9,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 
-
+from fastapi.param_functions import Query
 from models.models import User as ORMUser
 from models.models import Cookies as ORMCookies
 from models.models import Zachetka as ORMZachetka
@@ -17,6 +17,11 @@ from models.models import Notes as ORMNotes
 from models.models import Subject as ORMSubject
 app = FastAPI()
 router = APIRouter()
+from gino import Gino
+import os
+
+
+db = Gino()
 app.mount(
     "/static",
     StaticFiles(directory=Path(__file__).parent.parent.parent.parent.absolute() / "static"),
@@ -61,9 +66,12 @@ async def get_my_notes(CookieId: Optional[str] = Cookie(None))-> Any:
     check = check.__dict__
     value = check["__values__"]
     userId = value['userId']
-    zachetkaid : ORMZachetka = await ORMZachetka.get_zachetka_userId(userId = userId)
-    zachetkaid = zachetkaid.__dict__
-    zachetkaid = zachetkaid["__values__"]
-    zachetkaid = zachetkaid["id"]
-    my_notes: ORMNotes = await ORMNotes.get_notes_of_zachetka(zachetkaid = zachetkaid)
+    #return userId
+    zachetkaid: ORMZachetka = await ORMZachetka.query.where(ORMZachetka.userId == userId).gino.first()
+    zachetkaid = zachetkaid.id
+    # zachetkaid : ORMZachetka = await ORMZachetka.get_zachetka_userId(userId = userId)
+    # zachetkaid = zachetkaid.__dict__
+    # zachetkaid = zachetkaid["__values__"]
+    # zachetkaid = zachetkaid["id"]
+    my_notes: ORMNotes = await ORMNotes.get_notes_of_zachetka(zachetkaid = int(zachetkaid))
     return my_notes

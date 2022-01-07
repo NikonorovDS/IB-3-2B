@@ -22,7 +22,8 @@ class UserBase(BaseModel):
     direction: Optional[str] 
     group: Optional[str]
     hostel: Optional[str] 
-    password: Optional[str] 
+    password: Optional[str]
+    zachetkaid: Optional[str]
     
 class UserCreate(UserBase):
    # id: int
@@ -36,7 +37,8 @@ class UserCreate(UserBase):
     direction: Optional[str] 
     group: Optional[str]
     hostel: Optional[str] 
-    password: Optional[str] 
+    password: Optional[str]
+    zachetkaid: Optional[str] 
 class UserUpdate(UserBase):
     pass
 
@@ -53,7 +55,8 @@ class User(UserBase):
     direction: Optional[str] 
     group: Optional[str]
     hostel: Optional[str] 
-    password: Optional[str] 
+    password: Optional[str]
+    zachetkaid: Optional[str] 
    
     class Config:
         orm_mode = True

@@ -62,7 +62,7 @@ async def update_status(student , way_point , quantity ,new_status ,status_autho
     return status
 
 
-@router.get('/get_dopusk')
+@router.get('/get_my_dopusk')
 async def get_dopusk(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)) -> Any:
     if CookieId is None:
         response =  RedirectResponse(
