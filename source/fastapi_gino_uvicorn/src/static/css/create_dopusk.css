@@ -25,15 +25,33 @@ img{
   width: 90px;
   height: 90px;
 }
-
-
-.text {
-  color: rgba(0, 0, 0, 1);
-  font-size: 80px;
-  letter-spacing: 0%;
-  text-align: center;
-  font-family: Roboto, sans-serif;
+.button_exit{
+  position:absolute;
+  left: 87.5%;
+  top: 30px;
+  max-width: 100px;
+  width:100px;
+  height: 40px;
+  border-width: 1px;
+  border-style: solid;
+  background-color: rgba(252, 252, 252, 1);
+  align-self: stretch;
+  font-size: 19px;
 }
+
+.case {
+  margin: 20px 0px 0px 0px;
+  padding-top: 10px;
+  justify-content: center;
+  background-color: rgba(242, 242, 242, 1);
+}
+
+.icon_accept{
+  width: 30px;
+  height: 30px;
+}
+
+
 input {
   margin-top: 10px;
   display: flex;
@@ -58,24 +76,20 @@ input {
   background-color: rgba(124, 160, 251, 1);
   align-self: stretch;
 }
-
-.button_exit{
-  position:absolute;
-  left: 87.5%;
-  top: 30px;
-  max-width: 100px;
+.button1 {
+  margin-top: 20px;
+  position:static;
+  left:130px;
   width:100px;
   height: 40px;
   border-width: 1px;
   border-style: solid;
-  background-color: rgba(252, 252, 252, 1);
+  background-color: rgba(124, 160, 251, 1);
   align-self: stretch;
   font-size: 19px;
 }
-
-.case {
-  margin: 20px 0px 0px 0px;
-  padding-top: 10px;
-  justify-content: center;
-  background-color: rgba(242, 242, 242, 1);
+.succsefull {
+  color: green;
+  text-align: center;
+  font-size: 30px;
 }

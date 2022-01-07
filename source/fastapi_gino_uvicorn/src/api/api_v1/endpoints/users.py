@@ -109,6 +109,12 @@ async def main(request: Request,response: Response):
 @router.get('/create_dopusk',response_class=HTMLResponse )
 async def main(request: Request,response: Response):
     return templates.TemplateResponse('create_dopusk.html',{"request":request})
+@router.get('/create_dopusk_accept',response_class=HTMLResponse )
+async def main(request: Request,response: Response):
+    return templates.TemplateResponse('create_dopusk_accept.html',{"request":request})
+@router.get('/create_spravka_accept',response_class=HTMLResponse )
+async def main(request: Request,response: Response):
+    return templates.TemplateResponse('create_spravka_accept.html',{"request":request})
 
 
 @router.get('/start',response_class=HTMLResponse )

@@ -32,13 +32,13 @@ router = APIRouter()
 @router.post('/dopusk')
 async def create_dopusk(student =Form(...), teacher =Form(...), subject = Form(...),status_author="-") -> Any:
     submission = await ORMDopusk_submissions.get_or_create_dopusk(student,subject,teacher,status_author)
-    response =  RedirectResponse('http://localhost/v1/users/create_dopusk',  status_code=status.HTTP_302_FOUND)
+    response =  RedirectResponse('http://localhost/v1/users/create_dopusk_accept',  status_code=status.HTTP_302_FOUND)
     return response
 
 @router.post('/spravka')
-async def create_spravka(student, way_point, quantity) -> Any:
+async def create_spravka(student=Form(...), way_point=Form(...), quantity=Form(...)) -> Any:
     submission = await ORMSpravka_submissions.get_or_create_spravka(student,way_point,int(quantity),'-')
-    response =  RedirectResponse('http://localhost/v1/users/create_spravka',  status_code=status.HTTP_302_FOUND)
+    response =  RedirectResponse('http://localhost/v1/users/create_spravka_accept',  status_code=status.HTTP_302_FOUND)
     return response
 
 @router.get("/get_dopusk")
