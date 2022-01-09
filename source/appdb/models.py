@@ -42,10 +42,13 @@ class User(db.Model) :
         if role == 'student':
             await Zachetka.create_zachetka(zachetkaid=zachetkaid,userId=email,name=name)
             #zachetkaid = zachetkaid.zachetkaid
-        user = await cls.create(login=login,email=email,phone=phone,role=role,name=name, 
-        admission_year=admission_year, course=course,direction=direction,group=group
-        ,hostel=hostel,password=str(hash_password.hexdigest()),zachetkaid=zachetkaid)
-        
+            user = await cls.create(login=login,email=email,phone=phone,role=role,name=name, 
+            admission_year=admission_year, course=course,direction=direction,group=group
+            ,hostel=hostel,password=str(hash_password.hexdigest()),zachetkaid=zachetkaid)
+        else:
+            user = await cls.create(login=login,email=email,phone=phone,role=role,name=name, 
+            admission_year=admission_year, course=course,direction=direction,group=group
+            ,hostel=hostel,password=str(hash_password.hexdigest()))
         return user
     @classmethod
     async def check_password(cls,email,password)-> "User":
@@ -249,12 +252,12 @@ class Spravka_submissions(db.Model):
 
 class Zachetka(db.Model):
     __tablename__ = 'zachetka'
-    id : int = db.Column(db.Integer, primary_key=True)
+    id : str = db.Column(db.String, primary_key=True)
     userId: str = db.Column(db.String)
     name: str = db.Column(db.String)
     @classmethod
     async def create_zachetka(cls,zachetkaid,userId,name):
-        return await cls.create(id=int(zachetkaid),userId=userId,name=name)
+        return await cls.create(id=zachetkaid,userId=userId,name=name)
     @classmethod
     async def get_zachetka_name(cls,name):
         return cls.query.where(Zachetka.name==name).gino.first()

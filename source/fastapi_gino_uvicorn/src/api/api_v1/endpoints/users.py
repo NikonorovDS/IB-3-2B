@@ -115,12 +115,6 @@ async def main(request: Request,response: Response):
 @router.get('/create_spravka_accept',response_class=HTMLResponse )
 async def main(request: Request,response: Response):
     return templates.TemplateResponse('create_spravka_accept.html',{"request":request})
-@router.get('/status_dopusk',response_class=HTMLResponse )
-async def main(request: Request,response: Response):
-    return templates.TemplateResponse('status_dopusk',{"request":request})
-@router.get('/status_spravka',response_class=HTMLResponse )
-async def main(request: Request,response: Response):
-    return templates.TemplateResponse('status_spravka.html',{"request":request})
 @router.get('/login_false',response_class=HTMLResponse )
 async def main(request: Request,response: Response):
     return templates.TemplateResponse('login_false.html',{"request":request})
@@ -130,12 +124,16 @@ async def main(request: Request,response: Response):
 async def start(request: Request,response: Response,CookieId: Optional[str] = Cookie(None))-> Any:
     check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
     print(check)
+    
     if check == 504:
         response = templates.TemplateResponse('login.html',{"request":request})
         response.delete_cookie("CookieId")
         return response
-
-    return templates.TemplateResponse('login.html',{"request":request})
+    else:
+        response =  RedirectResponse(
+            'http://localhost:80/v1/users/main',  status_code=status.HTTP_302_FOUND)
+        return response
+    #return templates.TemplateResponse('login.html',{"request":request})
 @router.post('/login')
 async def login(email = Form(...),password = Form(...),CookieId: Optional[str] = Cookie(None)) -> Any:
     #request.json()
@@ -163,7 +161,10 @@ async def login(email = Form(...),password = Form(...),CookieId: Optional[str] =
         if check == 504:
             return RedirectResponse(
             'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
-        return{'meesage':'Your cookies is True'}
+        else:
+            response =  RedirectResponse(
+            'http://localhost:80/v1/users/main',  status_code=status.HTTP_302_FOUND)
+            return response 
 @router.get('/login/desauth')
 async def desauth(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)) -> Any:
     response =  RedirectResponse(
