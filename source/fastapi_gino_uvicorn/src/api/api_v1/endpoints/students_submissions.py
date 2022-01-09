@@ -61,6 +61,18 @@ async def update_status(student , way_point , quantity ,new_status ,status_autho
     status = await ORMSpravka_submissions.update_status(student,way_point,int(quantity),new_status,status_author)
     return status
 
+def aaa(dopusk):
+    a=''
+    dopusk1=[]
+    for item in dopusk:
+        for i in item.items():
+            a=i[1]
+            if isinstance(a,dict):
+                dopusk1.append(a)
+    dopusk2=''
+    for item in dopusk1:
+        dopusk2+="""<tr>\n<td>{{"""+item['student']+"""}}</td>\n<td>{{"""+item['teacher']+"""}}</td>\n<td>{{"""+item['subject']+"""}}</td>\n<td>{{"""+item['status']+"""}}</td>\n</tr>\n"""
+    return dopusk2
 
 @router.get('/get_my_dopusk')
 async def get_dopusk(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)) -> Any:
@@ -77,7 +89,9 @@ async def get_dopusk(request: Request,response: Response,CookieId: Optional[str]
         value = user['__values__']
         name = value['name']
         dopusk: ORMDopusk_submissions = await ORMDopusk_submissions.get_dopusk_of_user(student = name)
+        #dopusk2=aaa(dopusk)
         return dopusk
+
 @router.get('/get_spravka')
 async def get_spravka(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)) -> Any:
     if CookieId is None:
