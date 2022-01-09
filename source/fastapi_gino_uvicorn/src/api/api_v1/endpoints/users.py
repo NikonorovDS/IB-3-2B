@@ -1,6 +1,6 @@
 import argparse
 import sys
-
+from typing import List
 
 
 from typing import Any, List
@@ -115,9 +115,27 @@ async def main(request: Request,response: Response):
 @router.get('/create_spravka_accept',response_class=HTMLResponse )
 async def main(request: Request,response: Response):
     return templates.TemplateResponse('create_spravka_accept.html',{"request":request})
+<<<<<<< HEAD
+=======
+@router.get('/status_spravka',response_class=HTMLResponse )
+async def main(request: Request,response: Response):
+    return templates.TemplateResponse('status_spravka.html',{"request":request})
+>>>>>>> a6054bc2d32cab6c53c0baad814f8ff2238e9ccf
 @router.get('/login_false',response_class=HTMLResponse )
 async def main(request: Request,response: Response):
     return templates.TemplateResponse('login_false.html',{"request":request})
+
+@router.get('/status_dopusk',response_class=HTMLResponse )
+async def main(request: Request,response: Response):
+    dopusk=request.get('http://localhost:80/v1/submissions/get_my_dopusk')
+
+    return templates.TemplateResponse('status_dopusk.html',{"request":request,'dopusk':dopusk})
+
+@router.get('/status_dopusk1',response_class=HTMLResponse )
+async def main(request: Request,response: Response,dopusk:List):
+    return templates.TemplateResponse('status_dopusk.html',{"request":request})
+
+
 
 
 @router.get('/start',response_class=HTMLResponse )

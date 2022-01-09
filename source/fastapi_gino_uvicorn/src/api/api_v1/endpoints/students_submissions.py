@@ -63,6 +63,7 @@ async def update_status(student , way_point , quantity ,new_status ,status_autho
     status = await ORMSpravka_submissions.update_status(student,way_point,int(quantity),new_status,status_author)
     return status
 
+<<<<<<< HEAD
 @router.get('/status_dopusk',response_class=HTMLResponse )
 async def main(request: Request,response: Response):
     if CookieId is None:
@@ -79,6 +80,20 @@ async def main(request: Request,response: Response):
         name = value['name']
         dopusk: ORMDopusk_submissions = await ORMDopusk_submissions.get_dopusk_of_user(student = name)
     return templates.TemplateResponse('status_dopusk',{"request":request})
+=======
+def aaa(dopusk):
+    a=''
+    dopusk1=[]
+    for item in dopusk:
+        for i in item.items():
+            a=i[1]
+            if isinstance(a,dict):
+                dopusk1.append(a)
+    dopusk2=''
+    for item in dopusk1:
+        dopusk2+="""<tr>\n<td>{{"""+item['student']+"""}}</td>\n<td>{{"""+item['teacher']+"""}}</td>\n<td>{{"""+item['subject']+"""}}</td>\n<td>{{"""+item['status']+"""}}</td>\n</tr>\n"""
+    return dopusk2
+>>>>>>> a6054bc2d32cab6c53c0baad814f8ff2238e9ccf
 
 @router.get('/get_my_dopusk')
 async def get_dopusk(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)) -> Any:
@@ -95,9 +110,16 @@ async def get_dopusk(request: Request,response: Response,CookieId: Optional[str]
         value = user['__values__']
         name = value['name']
         dopusk: ORMDopusk_submissions = await ORMDopusk_submissions.get_dopusk_of_user(student = name)
+        #dopusk2=aaa(dopusk)
         return dopusk
+<<<<<<< HEAD
 @router.get('/get_my_spravka',response_class=HTMLResponse )
 async def get_status(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)):
+=======
+
+@router.get('/get_spravka')
+async def get_spravka(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)) -> Any:
+>>>>>>> a6054bc2d32cab6c53c0baad814f8ff2238e9ccf
     if CookieId is None:
         response =  RedirectResponse(
             'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)

@@ -21,11 +21,16 @@
     <form action="http://localhost:80/v1/users/main" method="get">
       <button class="button1">Назад</button>
     </form>
-    <form action="http://localhost:80/v1/submissions/spravka" method="post">
-      <input type="text" name="student" placeholder="ФИО">
-      <input type="text" name="way_point" placeholder="Место назначения">
-      <input type="number" min="0" name="quantity" placeholder="количество">
-      <button class="button">Создать</button>
+    <form action="http://localhost:80/v1/submissions/get_my_dopusk" method="get">
+        <tr>
+          <th>ФИО</th>
+          <th>Препод</th>
+          <th>Предмет</th>
+          <th>Статус</th>
+        </tr>
+      {{dopusk}}
+      <button class="button">Проверить</button>
+
     </form>
 
   </div>
