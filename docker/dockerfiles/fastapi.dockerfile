@@ -37,7 +37,7 @@ COPY ./source/fastapi_gino_uvicorn/migrations ./migrations/
 RUN poetry install --no-root --no-dev
 
 COPY ./source/fastapi_gino_uvicorn/src ./
-#COPY ./clouds/fastapi_gino_uvicorn/data ./data/
+
 
 COPY ./source/appdb/* ./models/
 
