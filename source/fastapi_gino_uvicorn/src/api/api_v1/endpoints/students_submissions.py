@@ -97,8 +97,15 @@ async def get_dopusk(request: Request,response: Response,CookieId: Optional[str]
         value = user['__values__']
         name = value['name']
         dopusk: ORMDopusk_submissions = await ORMDopusk_submissions.get_dopusk_of_user(student = name)
+        dopusk_dict = {}
+        s = 1
+        for i in dopusk:
+            dopusk = i.__dict__
+            values = dopusk["__values__"]
+            dopusk_dict[s] = values
+            s +=1 
         #dopusk2=aaa(dopusk)
-        return dopusk
+        return templates.TemplateResponse('status_dopusk.html',{"request":request,'dopusk':dopusk_dict})
 @router.get('/get_my_spravka',response_class=HTMLResponse )
 async def get_status(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)):
     if CookieId is None:
@@ -114,5 +121,12 @@ async def get_status(request: Request,response: Response,CookieId: Optional[str]
         value = user['__values__']
         name = value['name']
         spravka: ORMSpravka_submissions = await ORMSpravka_submissions.get_spravka_of_user(student = name)
+        spravka_dict = {}
+        s=1
+        for i in spravka:
+            spravka = i.__dict__
+            values = spravka["__values__"]
+            spravka_dict[s] = values
+            s += 1 
       
-    return templates.TemplateResponse('status_spravka.html',{"request":request})
+    return templates.TemplateResponse('status_spravka.html',{"request":request,"spravka":spravka_dict})
