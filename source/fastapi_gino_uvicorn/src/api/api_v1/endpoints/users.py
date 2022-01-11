@@ -122,12 +122,8 @@ async def main(request: Request,response: Response):
 @router.get('/status_dopusk',response_class=HTMLResponse )
 async def main(request: Request,response: Response):
     dopusk=request.get('http://localhost:80/v1/submissions/get_my_dopusk')
-
     return templates.TemplateResponse('status_dopusk.html',{"request":request,'dopusk':dopusk})
 
-@router.get('/status_dopusk1',response_class=HTMLResponse )
-async def main(request: Request,response: Response,dopusk:List):
-    return templates.TemplateResponse('status_dopusk.html',{"request":request})
 
 
 
@@ -136,7 +132,7 @@ async def main(request: Request,response: Response,dopusk:List):
 async def start(request: Request,response: Response,CookieId: Optional[str] = Cookie(None))-> Any:
     check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
     print(check)
-    
+
     if check == 504:
         response = templates.TemplateResponse('login.html',{"request":request})
         response.delete_cookie("CookieId")
@@ -176,7 +172,7 @@ async def login(email = Form(...),password = Form(...),CookieId: Optional[str] =
         else:
             response =  RedirectResponse(
             'http://localhost:80/v1/users/main',  status_code=status.HTTP_302_FOUND)
-            return response 
+            return response
 @router.get('/login/desauth')
 async def desauth(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)) -> Any:
     response =  RedirectResponse(
