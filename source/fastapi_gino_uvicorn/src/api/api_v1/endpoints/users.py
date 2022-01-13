@@ -132,7 +132,6 @@ async def main(request: Request,response: Response):
 async def start(request: Request,response: Response,CookieId: Optional[str] = Cookie(None))-> Any:
     check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
     print(check)
-
     if check == 504:
         response = templates.TemplateResponse('login.html',{"request":request})
         response.delete_cookie("CookieId")

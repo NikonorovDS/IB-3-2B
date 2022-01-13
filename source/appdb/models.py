@@ -70,6 +70,11 @@ class User(db.Model) :
     async def get_user_for_email(cls,email) -> "User":
         user = await cls.query.where(User.email == email).gino.first()
         return user 
+    @classmethod 
+    async def get_name(cls,email) -> "User":
+        user = await cls.query.where(User.email == email).gino.first()
+        name = user.name
+        return name
 class Messages(db.Model):
     __tablename__ = 'messages'
     id:  int = db.Column(db.Integer, primary_key=True,autoincrement=True)
@@ -116,7 +121,7 @@ class Cookies(db.Model):
     __tablename__ = 'cookies'
     value: str =  db.Column(db.String,primary_key=True)
     userId: str = db.Column(db.String, default='-')
-   
+
     date = db.Column(db.DateTime())
     @classmethod
     async def get_or_create(cls,userId,value)-> "Cookies":

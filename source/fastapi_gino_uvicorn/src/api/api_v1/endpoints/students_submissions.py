@@ -22,6 +22,7 @@ from models.models import Dopusk_submissions as ORMDopusk_submissions
 from models.models import Spravka_submissions as ORMSpravka_submissions
 from datetime import date,datetime
 
+from fastapi import Request,Response,Cookie,Form
 
 from fastapi.templating import Jinja2Templates
 db = Gino()
@@ -32,16 +33,40 @@ router = APIRouter()
 
 templates = Jinja2Templates(directory="./templates")
 @router.post('/dopusk')
-async def create_dopusk(student =Form(...), teacher =Form(...), subject = Form(...),status_author="-") -> Any:
-    submission = await ORMDopusk_submissions.get_or_create_dopusk(student,subject,teacher,status_author)
-    response =  RedirectResponse('http://localhost/v1/users/create_dopusk_accept',  status_code=status.HTTP_302_FOUND)
-    return response
+async def create_dopusk(CookieId: Optional[str] = Cookie(None), teacher =Form(...), subject = Form(...),status_author="-") -> Any:
+    request= Request
+    response= Response
+    if CookieId is None:
+        response =  RedirectResponse(
+            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+    else:
+        check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
+        check = check.__dict__
+        value = check["__values__"]
+        student = value['userId']
+        student = str(student)
+        student = await ORMUser.get_name(email = student)
+        submission = await ORMDopusk_submissions.get_or_create_dopusk(student,subject,teacher,status_author)
+        response =  RedirectResponse('http://localhost/v1/users/create_dopusk_accept',  status_code=status.HTTP_302_FOUND)
+        return response
 
 @router.post('/spravka')
-async def create_spravka(student=Form(...), way_point=Form(...), quantity=Form(...)) -> Any:
-    submission = await ORMSpravka_submissions.get_or_create_spravka(student,way_point,int(quantity),'-')
-    response =  RedirectResponse('http://localhost/v1/users/create_spravka_accept',  status_code=status.HTTP_302_FOUND)
-    return response
+async def create_spravka(CookieId: Optional[str] = Cookie(None),way_point=Form(...), quantity=Form(...)) -> Any:
+    request= Request
+    response= Response
+    if CookieId is None:
+        response =  RedirectResponse(
+            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+    else:
+        check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
+        check = check.__dict__
+        value = check["__values__"]
+        student = value['userId']
+        student = str(student)
+        student = await ORMUser.get_name(email = student)
+        submission = await ORMSpravka_submissions.get_or_create_spravka(student,way_point,int(quantity),'-')
+        response =  RedirectResponse('http://localhost/v1/users/create_spravka_accept',  status_code=status.HTTP_302_FOUND)
+        return response
 
 @router.get("/get_dopusk")
 async def get():

@@ -23,7 +23,6 @@
     </form>
     <div class="succsefull"><img src="{{ url_for('static', path='/photo/accept.png') }}" class="icon_accept" alt="icon">Справка создана</div>
     <form action="http://localhost:80/v1/submissions/spravka" method="post">
-      <input type="text" name="student" placeholder="ФИО">
       <input type="text" name="way_point" placeholder="Место назначения">
       <input type="number" min="0" name="quantity" placeholder="количество">
       <button class="button">Создать</button>
