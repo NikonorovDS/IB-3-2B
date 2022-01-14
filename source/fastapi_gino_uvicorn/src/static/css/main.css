@@ -37,6 +37,10 @@ img{
   background-color: rgba(252, 252, 252, 1);
   align-self: stretch;
   font-size: 19px;
+  cursor: pointer;
+}
+.button_exit:active{
+  background: rgba(229, 229, 229, 1);
 }
 
 .case {
@@ -58,6 +62,10 @@ img{
   background-color: rgba(252, 252, 252, 1);
   align-self: stretch;
   font-size: 19px;
+  cursor: pointer;
+}
+.button1:active{
+  background: rgba(229, 229, 229, 1);
 }
 .button2{
   margin-top: 20px;
@@ -70,4 +78,8 @@ img{
   background-color: rgba(252, 252, 252, 1);
   align-self: stretch;
   font-size: 19px;
+  cursor: pointer;
+}
+.button2:active{
+  background: rgba(229, 229, 229, 1);
 }

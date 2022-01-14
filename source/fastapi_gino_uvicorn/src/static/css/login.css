@@ -50,8 +50,9 @@ input {
   border-width: 1px;
   border-style: solid;
   background-color: rgba(252, 252, 252, 1);
+  cursor: text;
 }
-.button {
+.button1 {
   margin-top: 20px;
   position:relative;
   left:130px;
@@ -65,11 +66,9 @@ input {
   align-self: stretch;
   cursor: pointer;
 }
-.button:hover{
- background: rgba(97,138,217,1);
-}
-.button:active{
-  background: rgba(59,89,171,1);
+
+.button1:active{
+  background: rgba(97,138,217,1);
   color:white;
 }
 

@@ -18,6 +18,7 @@ body{
 .logo{
   max-width: 50px;
   max-height: 50px;
+  cursor: pointer;
 }
 
 img{
@@ -37,8 +38,11 @@ img{
   background-color: rgba(252, 252, 252, 1);
   align-self: stretch;
   font-size: 19px;
+  cursor: pointer;
 }
-
+.button_exit:active{
+  background: rgba(229, 229, 229, 1);
+}
 .case {
   margin: 20px 0px 0px 0px;
   padding-top: 10px;
@@ -61,8 +65,12 @@ img{
   background-color: rgba(124, 160, 251, 1);
   align-self: stretch;
   font-size: 19px;
+  cursor: pointer;
 }
-
+.button1:active{
+  background: rgba(97,138,217,1);
+  color:white;
+}
 input {
   margin-top: 10px;
   display: flex;
@@ -72,6 +80,7 @@ input {
   border-width: 1px;
   border-style: solid;
   background-color: rgba(252, 252, 252, 1);
+  cursor: text;
 }
 
 .button {
@@ -88,6 +97,11 @@ input {
   font-size: 19px;
   background-color: rgba(124, 160, 251, 1);
   align-self: stretch;
+  cursor: pointer;
+}
+.button:active{
+  background: rgba(97,138,217,1);
+  color:white;
 }
 
 .succsefull {
@@ -122,5 +136,6 @@ td {
   display: flex;
   margin: auto;
   width: 30px;
-  height: 30px
+  height: 30px;
+  cursor: pointer;
 }
