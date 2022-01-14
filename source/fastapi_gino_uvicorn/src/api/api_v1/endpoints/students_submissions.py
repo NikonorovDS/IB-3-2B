@@ -137,16 +137,17 @@ async def main(request: Request, response: Response, id: str):
     "__profile__": 'null'}
     return templates.TemplateResponse('edit_spravka.html',{"request":request, "spravka":spravka, "id":id})
 
-@router.get('/edit_spravka/{status}',response_class=HTMLResponse )
-async def main(request: Request, response: Response, status: str):
-    # Ещё не работает
-    return templates.TemplateResponse('edit_spravka.html',{"request":request, "spravka":spravka, "id":id, "status":status})
+@router.post('/edit_spravka/{id}',response_class=HTMLResponse )
+async def main(request: Request, response: Response, id: str,status=Form(...)):
+    # id- id допуска/справки
 
-@router.get('/edit_dopusk/{status}',response_class=HTMLResponse )
-async def main(request: Request, response: Response, status: str):
-    # Ещё не работает
+    return {'message':status}
 
-    return templates.TemplateResponse('edit_spravka.html',{"request":request, "spravka":spravka, "status":status})
+@router.post('/edit_dopusk/{id}',response_class=HTMLResponse )
+async def main(request: Request, response: Response, id: str,status=Form(...)):
+    # id- id допуска/справки
+
+    return {'message':status}
 
 
 

@@ -27,17 +27,16 @@
       <div class="case_item">{{items.subject}}</div>
       <div class="case_item">{{items.status}}</div>
       {% endfor %}
-      <form action="http://localhost:80/v1/submissions/edit_dopusk/"  method="get">
+      <form action="http://localhost:80/v1/submissions/edit_dopusk/{{id}}"  method="post">
       <div class="">
-        <select class="select" name="Status">
-          <option value="{{id}}pol">Полученно</a></option>
-          <option value="{{id}}otpr">Отправленно</a></option>
-          <option value="{{id}}got">Готово</a></option>
+        <select class="select" name="status">
+          <option value="pol">Полученно</a></option>
+          <option value="obrab">Обрабатывается</a></option>
+          <option value="got">Готово</a></option>
         </select>
       </div>
       <button class="button">Обновить</button>
     </form>
-    {{status}}
   </div>
 </body>
 </html>
