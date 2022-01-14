@@ -176,13 +176,14 @@ class Dopusk_submissions(db.Model):
     teacher: str =  db.Column(db.String,default='-')
     subject: str =  db.Column(db.String,default='-')
     status_author: str = db.Column(db.String,default='-')
+    semestr: int = db.Column(db.Integer)
     status: str =  db.Column(db.String,default='Получено')
     date = db.Column(db.DateTime())
     
  
 
     @classmethod
-    async def get_or_create_dopusk(cls,student,subject,teacher,status_author)-> "Dopusk_submissions":
+    async def get_or_create_dopusk(cls,student,subject,teacher,status_author,semestr)-> "Dopusk_submissions":
         date = datetime.now()
         dopusk = await cls.query.where(cls.student == student).gino.all()
         if dopusk is not None:
@@ -190,9 +191,9 @@ class Dopusk_submissions(db.Model):
                 dopusk_subject = i.subject
                 if dopusk_subject == subject:
                     return i
-            return await cls.create(student=student,subject=subject,teacher=teacher,status_author=status_author,date = date)
+            return await cls.create(student=student,subject=subject,teacher=teacher,status_author=status_author,date = date,semestr=semestr)
         if dopusk is None:
-            return await cls.create(student=student,subject=subject,teacher=teacher,status_author=status_author,date = date)
+            return await cls.create(student=student,subject=subject,teacher=teacher,status_author=status_author,date = date,semestr=semestr)
 
     @classmethod
     async def update_spravka(cls,student,subject,teacher,new_status,status_author):
@@ -230,6 +231,8 @@ class Dopusk_submissions(db.Model):
             return dopusk
         else:
             return "dopusk id none"
+ 
+
 
 class Spravka_submissions(db.Model): 
     __tablename__ = 'spravka_submissions'

@@ -33,7 +33,7 @@ router = APIRouter()
 
 templates = Jinja2Templates(directory="./templates")
 @router.post('/dopusk')
-async def create_dopusk(CookieId: Optional[str] = Cookie(None), teacher =Form(...), subject = Form(...),status_author="-") -> Any:
+async def create_dopusk(CookieId: Optional[str] = Cookie(None), teacher =Form(...), subject = Form(...),status_author="-",semestr = Form(...)) -> Any:
     request= Request
     response= Response
     if CookieId is None:
@@ -46,7 +46,7 @@ async def create_dopusk(CookieId: Optional[str] = Cookie(None), teacher =Form(..
         student = value['userId']
         student = str(student)
         student = await ORMUser.get_name(email = student)
-        submission = await ORMDopusk_submissions.get_or_create_dopusk(student,subject,teacher,status_author)
+        submission = await ORMDopusk_submissions.get_or_create_dopusk(student,subject,teacher,status_author,int(semestr))
         response =  RedirectResponse('http://localhost/v1/users/create_dopusk_accept',  status_code=status.HTTP_302_FOUND)
         return response
 
@@ -108,17 +108,8 @@ async def main(request: Request,response: Response):
 @router.get('/viev_dopusk/{id}',response_class=HTMLResponse )
 async def main(request: Request, response: Response, id: str):
     #id- id Допуска который нужен нам для редактирования
-    dopusk={
-    "__values__": {
-      "id": 1,
-      "student": "1",
-      "teacher": "23",
-      "subject": "asd",
-      "status_author": "-",
-      "status": "Получено",
-      "date": "2022-01-11T20:31:23.086160"
-    },
-    "__profile__": 'null'}
+    dopusk: ORMDopusk_submissions =  await ORMDopusk_submissions.get(int(id))
+    dopusk = dopusk.__dict__
     return templates.TemplateResponse('edit_dopusk.html',{"request":request,"dopusk":dopusk,"id":id})
 
 @router.get('/viev_spravka/{id}',response_class=HTMLResponse )
@@ -234,20 +225,19 @@ async def get_status(request: Request,response: Response,CookieId: Optional[str]
         userId = value['userId']
         role : ORMUser = await ORMUser.get_role(username = userId)
         if role == 'student':
-            
             user: ORMUser = await ORMUser.get_user_for_email(email = userId)
             user = user.__dict__
             value = user['__values__']
             name = value['name']
-            dopusk: ORMDopusk_submissions = await ORMDopusk_submissions.get_dopusk_of_user(student = name)
-            dopusk_dict = {}
+            spravka: ORMSpravka_submissions = await ORMSpravka_submissions.get_spravka_of_user(student = name)
+            spravka_dict = {}
             s = 1
-            for i in dopusk:
-                dopusk = i.__dict__
-                values = dopusk["__values__"]
-                dopusk_dict[s] = values
+            for i in spravka:
+                spravka = i.__dict__
+                values = spravka["__values__"]
+                spravka_dict[s] = values
                 s +=1
-            return templates.TemplateResponse('status_dopusk.html',{"request":request,'dopusk':dopusk_dict})
+            return templates.TemplateResponse('status_spravka.html',{"request":request,'spravka':spravka_dict})
         elif role == 'admin':
             spravka: ORMSpravka_submissions = await ORMSpravka_submissions.get_all()
             spravka_dict = {}

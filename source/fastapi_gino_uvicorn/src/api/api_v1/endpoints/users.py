@@ -58,14 +58,19 @@ async def main(request: Request,response: Response,CookieId: Optional[str] = Coo
         return response 
     else:
         check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
-        check = check.__dict__
-        value = check["__values__"]
-        userId = value['userId']
-        role : ORMUser = await ORMUser.get_role(username = userId)
-        if role == 'admin':
-            return templates.TemplateResponse('main_admin.html',{"request":request})
+        if check == 504:
+            response =  RedirectResponse(
+            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+            return response 
         else:
-            return templates.TemplateResponse('main.html',{"request":request})
+            check = check.__dict__
+            value = check["__values__"]
+            userId = value['userId']
+            role : ORMUser = await ORMUser.get_role(username = userId)
+            if role == 'admin':
+                return templates.TemplateResponse('main_admin.html',{"request":request})
+            else:
+                return templates.TemplateResponse('main.html',{"request":request})
 
 
 
@@ -102,9 +107,7 @@ async def main(request: Request,response: Response):
 async def main(request: Request,response: Response):
     return templates.TemplateResponse('create_spravka_accept.html',{"request":request})
 
-@router.get('/login_false',response_class=HTMLResponse )
-async def main(request: Request,response: Response):
-    return templates.TemplateResponse('login_false.html',{"request":request})
+
 
 @router.get('/status_dopusk',response_class=HTMLResponse )
 async def main(request: Request,response: Response):
@@ -118,7 +121,7 @@ async def main(request: Request,response: Response):
 @router.get('/start',response_class=HTMLResponse )
 async def start(request: Request,response: Response,CookieId: Optional[str] = Cookie(None))-> Any:
     check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
-    print(check)
+    status = response.status_code
     if check == 504:
         response = templates.TemplateResponse('login.html',{"request":request})
         response.delete_cookie("CookieId")
@@ -127,12 +130,26 @@ async def start(request: Request,response: Response,CookieId: Optional[str] = Co
         response =  RedirectResponse(
             'http://localhost:80/v1/users/main',  status_code=status.HTTP_302_FOUND)
         return response
+@router.get('/login_false',response_class=HTMLResponse )
+async def main(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)) -> Any:
+    check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
+    status = response.status_code
+    if check == 504:
+        return templates.TemplateResponse('login_false.html',{"request":request})
+        response.delete_cookie("CookieId")
+        return response
+    else:
+        response =  RedirectResponse(
+            'http://localhost:80/v1/users/main',  status_code=status.HTTP_302_FOUND)
+        return response
+    
 
-@router.post('/login')
+@router.post('/login',response_class=HTMLResponse )
 async def login(email = Form(...),password = Form(...),CookieId: Optional[str] = Cookie(None)) -> Any:
     password = hashlib.sha256(password.encode())
     password=str(password.hexdigest())
-    response: Request
+    response= Response
+    request = Request
     if CookieId is None:
         check : ORMUser = await ORMUser.check_password(email,password)
         username = email
@@ -145,7 +162,7 @@ async def login(email = Form(...),password = Form(...),CookieId: Optional[str] =
             response.set_cookie(key="CookieId", value=value)
             return response
         else:
-            return RedirectResponse('http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+            return RedirectResponse('http://localhost:80/v1/users/login_false',  status_code=status.HTTP_302_FOUND)
     elif CookieId is not None:
         check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
         if check == 504:

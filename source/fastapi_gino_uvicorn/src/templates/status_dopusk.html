@@ -27,6 +27,7 @@
           <th>ФИО</th>
           <th>Препод</th>
           <th>Предмет</th>
+          <th>Семестр</th>
           <th>Статус</th>
         </tr>
       {% if dopusk!={} %}
@@ -35,6 +36,7 @@
           <td>{{items.student}}</td>
           <td>{{items.teacher}}</td>
           <td>{{items.subject}}</td>
+          <td>{{items.semestr}}</td>
           <td>{{items.status}}</td>
         </tr>
       {% endfor %}
