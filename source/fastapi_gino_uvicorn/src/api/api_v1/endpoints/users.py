@@ -55,6 +55,7 @@ async def main(request: Request,response: Response,CookieId: Optional[str] = Coo
     if CookieId is None:
         response =  RedirectResponse(
             'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+        return response 
     else:
         check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
         check = check.__dict__

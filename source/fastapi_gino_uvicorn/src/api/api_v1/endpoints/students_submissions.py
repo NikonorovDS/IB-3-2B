@@ -138,16 +138,45 @@ async def main(request: Request, response: Response, id: str):
     return templates.TemplateResponse('edit_spravka.html',{"request":request, "spravka":spravka, "id":id})
 
 @router.post('/edit_spravka/{id}',response_class=HTMLResponse )
-async def main(request: Request, response: Response, id: str,status=Form(...)):
+async def main(request: Request, response: Response, id: int,new_status=Form(...),CookieId: Optional[str] = Cookie(None)):
     # id- id допуска/справки
 
-    return {'message':status}
+    if CookieId is None:
+        response =  RedirectResponse(
+            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+        return response 
+    else:
+        check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
+        check = check.__dict__
+        value = check["__values__"]
+        userId = value['userId']
+        role : ORMUser = await ORMUser.get_role(username = userId)
+        if role == 'admin':
+            spravka : ORMSpravka_submissions = await ORMSpravka_submissions.update_status(id=id,new_status=new_status)
+            response =  RedirectResponse(
+            'http://localhost:80/v1/submissions/get_my_spravka',  status_code=status.HTTP_302_FOUND)
+            return response 
+    
 
 @router.post('/edit_dopusk/{id}',response_class=HTMLResponse )
-async def main(request: Request, response: Response, id: str,status=Form(...)):
+async def main(request: Request, response: Response, id: int,new_status=Form(...),CookieId: Optional[str] = Cookie(None)):
     # id- id допуска/справки
-
-    return {'message':status}
+    if CookieId is None:
+        response =  RedirectResponse(
+            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+        return response 
+    else:
+        check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
+        check = check.__dict__
+        value = check["__values__"]
+        userId = value['userId']
+        role : ORMUser = await ORMUser.get_role(username = userId)
+        if role == 'admin':
+            dopusk : ORMDopusk_submissions = await ORMDopusk_submissions.update_status(id=id,new_status=new_status)
+            response =  RedirectResponse(
+            'http://localhost:80/v1/submissions/get_my_dopusk',  status_code=status.HTTP_302_FOUND)
+            return response 
+    
 
 
 
@@ -164,19 +193,32 @@ async def get_dopusk(request: Request,response: Response,CookieId: Optional[str]
         check = check.__dict__
         value = check["__values__"]
         userId = value['userId']
-        user: ORMUser = await ORMUser.get_user_for_email(email = userId)
-        user = user.__dict__
-        value = user['__values__']
-        name = value['name']
-        dopusk: ORMDopusk_submissions = await ORMDopusk_submissions.get_dopusk_of_user(student = name)
-        dopusk_dict = {}
-        s = 1
-        for i in dopusk:
-            dopusk = i.__dict__
-            values = dopusk["__values__"]
-            dopusk_dict[s] = values
-            s +=1
-        return templates.TemplateResponse('status_dopusk_admin.html',{"request":request,'dopusk':dopusk_dict})
+        role : ORMUser = await ORMUser.get_role(username = userId)
+        if role == 'student':
+            
+            user: ORMUser = await ORMUser.get_user_for_email(email = userId)
+            user = user.__dict__
+            value = user['__values__']
+            name = value['name']
+            dopusk: ORMDopusk_submissions = await ORMDopusk_submissions.get_dopusk_of_user(student = name)
+            dopusk_dict = {}
+            s = 1
+            for i in dopusk:
+                dopusk = i.__dict__
+                values = dopusk["__values__"]
+                dopusk_dict[s] = values
+                s +=1
+            return templates.TemplateResponse('status_dopusk.html',{"request":request,'dopusk':dopusk_dict})
+        elif role == 'admin':
+            dopusk: ORMDopusk_submissions = await ORMDopusk_submissions.get_all()
+            dopusk_dict = {}
+            s = 1
+            for i in dopusk:
+                dopusk = i.__dict__
+                values = dopusk["__values__"]
+                dopusk_dict[s] = values
+                s +=1
+            return templates.TemplateResponse('status_dopusk_admin.html',{"request":request,'dopusk':dopusk_dict})
 
 @router.get('/get_my_spravka',response_class=HTMLResponse )
 async def get_status(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)):
@@ -190,16 +232,29 @@ async def get_status(request: Request,response: Response,CookieId: Optional[str]
         check = check.__dict__
         value = check["__values__"]
         userId = value['userId']
-        user: ORMUser = await ORMUser.get_user_for_email(email = userId)
-        user = user.__dict__
-        value = user['__values__']
-        name = value['name']
-        spravka: ORMSpravka_submissions = await ORMSpravka_submissions.get_spravka_of_user(student = name)
-        spravka_dict = {}
-        s=1
-        for i in spravka:
-            spravka = i.__dict__
-            values = spravka["__values__"]
-            spravka_dict[s] = values
-            s += 1
-    return templates.TemplateResponse('status_spravka_admin.html',{"request":request,"spravka":spravka_dict})
+        role : ORMUser = await ORMUser.get_role(username = userId)
+        if role == 'student':
+            
+            user: ORMUser = await ORMUser.get_user_for_email(email = userId)
+            user = user.__dict__
+            value = user['__values__']
+            name = value['name']
+            dopusk: ORMDopusk_submissions = await ORMDopusk_submissions.get_dopusk_of_user(student = name)
+            dopusk_dict = {}
+            s = 1
+            for i in dopusk:
+                dopusk = i.__dict__
+                values = dopusk["__values__"]
+                dopusk_dict[s] = values
+                s +=1
+            return templates.TemplateResponse('status_dopusk.html',{"request":request,'dopusk':dopusk_dict})
+        elif role == 'admin':
+            spravka: ORMSpravka_submissions = await ORMSpravka_submissions.get_all()
+            spravka_dict = {}
+            s = 1
+            for i in spravka:
+                spravka = i.__dict__
+                values = spravka["__values__"]
+                spravka_dict[s] = values
+                s +=1
+            return templates.TemplateResponse('status_spravka_admin.html',{"request":request,'spravka':spravka_dict})

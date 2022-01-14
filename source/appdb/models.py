@@ -178,6 +178,7 @@ class Dopusk_submissions(db.Model):
     status_author: str = db.Column(db.String,default='-')
     status: str =  db.Column(db.String,default='Получено')
     date = db.Column(db.DateTime())
+    
  
 
     @classmethod
@@ -194,7 +195,7 @@ class Dopusk_submissions(db.Model):
             return await cls.create(student=student,subject=subject,teacher=teacher,status_author=status_author,date = date)
 
     @classmethod
-    async def update_status(cls,student,subject,teacher,new_status,status_author):
+    async def update_spravka(cls,student,subject,teacher,new_status,status_author):
        #dopusk = await Dopusk_submissions.get_or_create_dopusk(student,subject,teacher,status_author)
         #print(dopusk)
         dopusk = await cls.query.where(Dopusk_submissions.student == student and Dopusk_submissions.subject == subject and Dopusk_submissions.teacher == teacher).gino.first()
@@ -214,7 +215,21 @@ class Dopusk_submissions(db.Model):
     async def get_all(cls):
         return await cls.query.gino.all()
 
-
+    @classmethod
+    async def update_status(cls,id,new_status):
+        dopusk = await cls.get(id)
+        if dopusk is not None:
+            if new_status == 'got':
+                new_status = 'Готово'
+            elif new_status == "obrab":
+                new_status = 'Обрабатывается'
+            elif new_status == 'pol':
+                new_status = 'Получено'
+            new_dopusk_status = await dopusk.update(status = new_status).apply()
+            new_time = await dopusk.update(date = datetime.now()).apply()
+            return dopusk
+        else:
+            return "dopusk id none"
 
 class Spravka_submissions(db.Model): 
     __tablename__ = 'spravka_submissions'
@@ -224,21 +239,22 @@ class Spravka_submissions(db.Model):
     status_author: str = db.Column(db.String,default='-')
     quantity: int = db.Column(db.Integer,default=0)
     status: str =  db.Column(db.String,default='Получено')
-
+    date = db.Column(db.DateTime())
     @classmethod
     async def get_or_create_spravka(cls,student,way_point,quantity,status_author)-> "Spravka_submissions":
+        date = datetime.now()
         spravka = await cls.query.where(cls.student == student).gino.all()
         if spravka is not None:
             for i in spravka:
                 spravka_way_piont = i.way_point
                 if spravka_way_piont == way_point:
                     return i
-            return await cls.create(student=student,way_point=way_point,quantity=quantity,status_author=status_author)
+            return await cls.create(student=student,way_point=way_point,quantity=quantity,status_author=status_author,date = date)
         if spravka is None:
-            return await cls.create(student=student,way_point=way_point,quantity=quantity,status_author=status_author)
+            return await cls.create(student=student,way_point=way_point,quantity=quantity,status_author=status_author,date=date)
 
     @classmethod
-    async def update_status(cls,student,way_point,quantity,new_status,status_author):
+    async def update_spravka(cls,student,way_point,quantity,new_status,status_author):
         spravka = await Spravka_submissions.get_or_create_spravka(student,way_point,quantity,status_author)
         print(spravka)
         new_spravka_status = await spravka.update(status=new_status).apply()
@@ -252,6 +268,21 @@ class Spravka_submissions(db.Model):
     async def get_spravka_of_user(cls,student):
         spravka = await cls.query.where(Spravka_submissions.student == student).gino.all()
         return spravka
+    @classmethod
+    async def update_status(cls,id,new_status):
+        spravka = await cls.get(id)
+        if spravka is not None:
+            if new_status == 'got':
+                new_status = 'Готово'
+            elif new_status == "obrab":
+                new_status = 'Обрабатывается'
+            elif new_status == 'pol':
+                new_status = 'Получено'
+            new_spravka_status = await spravka.update(status = new_status).apply()
+            new_time = await spravka.update(date = datetime.now()).apply()
+            return spravka
+        else:
+            return "spravka id none"
 
 
 
