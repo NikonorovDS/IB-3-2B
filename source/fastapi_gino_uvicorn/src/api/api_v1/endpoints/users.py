@@ -50,10 +50,6 @@ async def read_users(
     return users
 
 
-
-#
-
-
 @router.get('/main',response_class=HTMLResponse )
 async def main(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)):
     if CookieId is None:
@@ -70,21 +66,7 @@ async def main(request: Request,response: Response,CookieId: Optional[str] = Coo
         else:
             return templates.TemplateResponse('main.html',{"request":request})
 
-# @router.get('/main_admin')
-# async def main_admin(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)):
-#     if CookieId is None:
-#         response =  RedirectResponse(
-#             'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
-#     else:
-#         check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
-#         check = check.__dict__
-#         value = check["__values__"]
-#         userId = value['userId']
-#         role : ORMUser = await ORMUser.get_role(username = userId)
-#         if role == 'admin':
-#             return templates.TemplateResponse('main_admin.html',{"request":request})
-#         else:
-#             return '404'
+
 
 @router.post('/useradd',response_class=HTMLResponse )
 async def useradd_admin(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)):
@@ -101,20 +83,24 @@ async def useradd_admin(request: Request,response: Response,CookieId: Optional[s
             return templates.TemplateResponse('useradd.html',{"request":request})
         else:
             return '404'
-  #  return templates.TemplateResponse('useradd.html',{"request":request})
+
 
 @router.get('/create_spravka',response_class=HTMLResponse )
 async def main(request: Request,response: Response):
     return templates.TemplateResponse('create_spravka.html',{"request":request})
+
 @router.get('/create_dopusk',response_class=HTMLResponse )
 async def main(request: Request,response: Response):
     return templates.TemplateResponse('create_dopusk.html',{"request":request})
+
 @router.get('/create_dopusk_accept',response_class=HTMLResponse )
 async def main(request: Request,response: Response):
     return templates.TemplateResponse('create_dopusk_accept.html',{"request":request})
+
 @router.get('/create_spravka_accept',response_class=HTMLResponse )
 async def main(request: Request,response: Response):
     return templates.TemplateResponse('create_spravka_accept.html',{"request":request})
+
 @router.get('/login_false',response_class=HTMLResponse )
 async def main(request: Request,response: Response):
     return templates.TemplateResponse('login_false.html',{"request":request})
@@ -140,10 +126,9 @@ async def start(request: Request,response: Response,CookieId: Optional[str] = Co
         response =  RedirectResponse(
             'http://localhost:80/v1/users/main',  status_code=status.HTTP_302_FOUND)
         return response
-    #return templates.TemplateResponse('login.html',{"request":request})
+
 @router.post('/login')
 async def login(email = Form(...),password = Form(...),CookieId: Optional[str] = Cookie(None)) -> Any:
-    #request.json()
     password = hashlib.sha256(password.encode())
     password=str(password.hexdigest())
     response: Request
@@ -159,21 +144,18 @@ async def login(email = Form(...),password = Form(...),CookieId: Optional[str] =
             response.set_cookie(key="CookieId", value=value)
             return response
         else:
-            return RedirectResponse(
-            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+            return RedirectResponse('http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
     elif CookieId is not None:
         check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
         if check == 504:
             return RedirectResponse(
             'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
         else:
-            response =  RedirectResponse(
-            'http://localhost:80/v1/users/main',  status_code=status.HTTP_302_FOUND)
+            response =  RedirectResponse('http://localhost:80/v1/users/main',  status_code=status.HTTP_302_FOUND)
             return response
 @router.get('/login/desauth')
 async def desauth(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)) -> Any:
-    response =  RedirectResponse(
-            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+    response =  RedirectResponse('http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
     response.delete_cookie("CookieId")
     delete : ORMCookies = await ORMCookies.delete_cookie(value=CookieId)
     return response
@@ -192,7 +174,7 @@ async def test_login(username: str,password:str ,response: Request)-> Any:
 
         return response
     else:
-        return requests.get("http://localhost:80/v1/users/start") #{'message':"password is not valid"}
+        return requests.get("http://localhost:80/v1/users/start")
 
 @router.get('/test_working')
 async def read_cookies(CookieId: Optional[str] = Cookie(None)) -> Any:
@@ -231,18 +213,6 @@ async def create_user(login = Form(...),email = Form(...),phone = Form(...), rol
 #            return '404'
 
 
-
-# @router.get('/{id}', response_model=User)
-# async def read_user(
-#     request: Request,
-#     id: str
-# ) -> Any:
-#     """
-#     Retrieve user by id
-#     """
-#     request.app.logger.debug(id)
-#     user : ORMUser = await ORMUser.get(id)
-#     return User.from_orm(user)
 
 
 @router.put('/{id}', response_model=User)
