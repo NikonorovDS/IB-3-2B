@@ -28,6 +28,7 @@
           <th>Препод</th>
           <th>Предмет</th>
           <th>Статус</th>
+          <th></th>
         </tr>
       {% if dopusk!={} %}
       {% for items in dopusk.values() %}
@@ -36,10 +37,12 @@
           <td>{{items.teacher}}</td>
           <td>{{items.subject}}</td>
           <td>{{items.status}}</td>
+          <td><a href="http://localhost:80/v1/submissions/viev_dopusk/{{items.id}}" method="get"><img src="{{ url_for('static', path='/photo/edit.png') }}" class="edit_logo" alt="logo_edit"></a></td>
         </tr>
       {% endfor %}
       {% endif %}
       </table>
+
       <button class="button">Обновить</button>
 
     </form>

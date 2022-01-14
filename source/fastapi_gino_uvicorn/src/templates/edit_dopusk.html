@@ -18,32 +18,26 @@
       </div>
   </div>
   <div class="case">
-    <form action="http://localhost:80/v1/users/main" method="get">
+    <form action="http://localhost:80/v1/submissions/get_my_dopusk" method="get">
       <button class="button1">Назад</button>
     </form>
-    <form action="http://localhost:80/v1/submissions/get_my_dopusk" method="get">
-      <table>
-        <tr>
-          <th>ФИО</th>
-          <th>Препод</th>
-          <th>Предмет</th>
-          <th>Статус</th>
-        </tr>
-      {% if dopusk!={} %}
-      {% for items in dopusk.values() %}
-        <tr>
-          <td>{{items.student}}</td>
-          <td>{{items.teacher}}</td>
-          <td>{{items.subject}}</td>
-          <td>{{items.status}}</td>
-        </tr>
+      {% for items in dopusk.values()%}
+      <div class="case_item">{{items.student}}</div>
+      <div class="case_item">{{items.teacher}}</div>
+      <div class="case_item">{{items.subject}}</div>
+      <div class="case_item">{{items.status}}</div>
       {% endfor %}
-      {% endif %}
-      </table>
+      <form action="http://localhost:80/v1/submissions/edit_dopusk/"  method="get">
+      <div class="">
+        <select class="select" name="Status">
+          <option value="{{id}}pol">Полученно</a></option>
+          <option value="{{id}}otpr">Отправленно</a></option>
+          <option value="{{id}}got">Готово</a></option>
+        </select>
+      </div>
       <button class="button">Обновить</button>
-
     </form>
-
+    {{status}}
   </div>
 </body>
 </html>

@@ -103,12 +103,58 @@ async def main(request: Request,response: Response):
         value = user['__values__']
         name = value['name']
         dopusk: ORMDopusk_submissions = await ORMDopusk_submissions.get_dopusk_of_user(student = name)
-    return templates.TemplateResponse('status_dopusk',{"request":request})
+    return templates.TemplateResponse('status_dopusk.html',{"request":request})
+
+@router.get('/viev_dopusk/{id}',response_class=HTMLResponse )
+async def main(request: Request, response: Response, id: str):
+    #id- id Допуска который нужен нам для редактирования
+    dopusk={
+    "__values__": {
+      "id": 1,
+      "student": "1",
+      "teacher": "23",
+      "subject": "asd",
+      "status_author": "-",
+      "status": "Получено",
+      "date": "2022-01-11T20:31:23.086160"
+    },
+    "__profile__": 'null'}
+    return templates.TemplateResponse('edit_dopusk.html',{"request":request,"dopusk":dopusk,"id":id})
+
+@router.get('/viev_spravka/{id}',response_class=HTMLResponse )
+async def main(request: Request, response: Response, id: str):
+    #id- id Допуска который нужен нам для редактирования
+    # Нужно вытаскивать допуск по id
+    spravka={
+    "__values__": {
+      "id": 1,
+      "student": "1",
+      "way_point": "smi2",
+      "status_author": "-",
+      "quantity": 123,
+      "status": "Получено"
+    },
+    "__profile__": 'null'}
+    return templates.TemplateResponse('edit_spravka.html',{"request":request, "spravka":spravka, "id":id})
+
+@router.get('/edit_spravka/{status}',response_class=HTMLResponse )
+async def main(request: Request, response: Response, status: str):
+    # Ещё не работает
+    return templates.TemplateResponse('edit_spravka.html',{"request":request, "spravka":spravka, "id":id, "status":status})
+
+@router.get('/edit_dopusk/{status}',response_class=HTMLResponse )
+async def main(request: Request, response: Response, status: str):
+    # Ещё не работает
+
+    return templates.TemplateResponse('edit_spravka.html',{"request":request, "spravka":spravka, "status":status})
 
 
 
 @router.get('/get_my_dopusk')
 async def get_dopusk(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)) -> Any:
+    #Нужна проверка куки. Если админ, то status_dopusk_admin.html,
+    # иначе status_dopusk.html Нужно вытаскивать все справки или сделать отдельный метод
+    # туда надо передавать в такомже формате
     if CookieId is None:
         response =  RedirectResponse(
             'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
@@ -128,14 +174,16 @@ async def get_dopusk(request: Request,response: Response,CookieId: Optional[str]
             dopusk = i.__dict__
             values = dopusk["__values__"]
             dopusk_dict[s] = values
-            s +=1 
-        #dopusk2=aaa(dopusk)
-        return templates.TemplateResponse('status_dopusk.html',{"request":request,'dopusk':dopusk_dict})
+            s +=1
+        return templates.TemplateResponse('status_dopusk_admin.html',{"request":request,'dopusk':dopusk_dict})
+
 @router.get('/get_my_spravka',response_class=HTMLResponse )
 async def get_status(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)):
+    #Нужна проверка куки. Если админ, то status_spravka_admin.html,
+    # иначе status_spravka.html. Нужно вытаскивать все допуски или сделать отдельный метод
+    # туда надо передавать в такомже формате
     if CookieId is None:
-        response =  RedirectResponse(
-            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+        response =  RedirectResponse('http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
     else:
         check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
         check = check.__dict__
@@ -152,6 +200,5 @@ async def get_status(request: Request,response: Response,CookieId: Optional[str]
             spravka = i.__dict__
             values = spravka["__values__"]
             spravka_dict[s] = values
-            s += 1 
-      
-    return templates.TemplateResponse('status_spravka.html',{"request":request,"spravka":spravka_dict})
+            s += 1
+    return templates.TemplateResponse('status_spravka_admin.html',{"request":request,"spravka":spravka_dict})

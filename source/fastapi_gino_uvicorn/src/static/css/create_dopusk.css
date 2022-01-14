@@ -50,7 +50,18 @@ img{
   width: 30px;
   height: 30px;
 }
-
+.button1 {
+  margin-top: 20px;
+  position:static;
+  left:130px;
+  width:100px;
+  height: 40px;
+  border-width: 1px;
+  border-style: solid;
+  background-color: rgba(124, 160, 251, 1);
+  align-self: stretch;
+  font-size: 19px;
+}
 
 input {
   margin-top: 10px;
@@ -65,15 +76,17 @@ input {
 
 .button {
   margin-top: 20px;
-  position:relative;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
   left:130px;
-  max-width: 400px;
-  width:400px;
+  max-width: 350px;
+  width:350px;
   height: 45px;
   border-width: 1px;
   border-style: solid;
   font-size: 19px;
-  background-color: red;
+  background-color: rgba(124, 160, 251, 1);
   align-self: stretch;
 }
 
@@ -83,22 +96,31 @@ input {
   font-size: 30px;
 }
 table {
-font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
-font-size: 14px;
-border-collapse: collapse;
-text-align: center;
+  margin-top: 20px;
+  font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+  font-size: 14px;
+  border-collapse: collapse;
+  text-align: center;
 }
 th {
-background: #AFCDE7;
-color: white;
-padding: 10px 20px;
-border-style: solid;
-border-width: 0 1px 1px 0;
-border-color: white;
+  width: 100px;
+  background: #AFCDE7;
+  color: white;
+  padding: 10px 20px;
+  border-style: solid;
+  border-width: 0 1px 1px 0;
+  border-color: white;
 }
 td {
-border-style: solid;
-border-width: 0 1px 1px 0;
-border-color: white;
-background: #D8E6F3;
+  height: 30px;
+  border-style: solid;
+  border-width: 0 1px 1px 0;
+  border-color: white;
+  background: #D8E6F3;
+}
+.edit_logo{
+  display: flex;
+  margin: auto;
+  width: 30px;
+  height: 30px
 }
