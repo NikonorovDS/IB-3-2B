@@ -72,7 +72,18 @@ input {
   align-self: stretch;
   font-size: 19px;
 }
-
+.button1 {
+  margin-top: 20px;
+  position:static;
+  left:130px;
+  width:100px;
+  height: 40px;
+  border-width: 1px;
+  border-style: solid;
+  background-color: rgba(124, 160, 251, 1);
+  align-self: stretch;
+  font-size: 19px;
+}
 .case {
   margin: 20px 0px 0px 0px;
   padding-top: 10px;
