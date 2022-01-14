@@ -31,7 +31,7 @@ app.mount(
 templates = Jinja2Templates(directory="templates")
 
 
-@router.get('/start',response_class=HTMLResponse )
+@router.get('/login',response_class=HTMLResponse )
 async def start(request: Request,response: Response,CookieId: Optional[str] = Cookie(None))-> Any:
     check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
     print(check)

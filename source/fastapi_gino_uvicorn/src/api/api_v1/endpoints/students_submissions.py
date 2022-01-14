@@ -38,7 +38,7 @@ async def create_dopusk(CookieId: Optional[str] = Cookie(None), teacher =Form(..
     response= Response
     if CookieId is None:
         response =  RedirectResponse(
-            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+            'http://localhost:80/v1/users/login',  status_code=status.HTTP_302_FOUND)
     else:
         check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
         check = check.__dict__
@@ -56,7 +56,7 @@ async def create_spravka(CookieId: Optional[str] = Cookie(None),way_point=Form(.
     response= Response
     if CookieId is None:
         response =  RedirectResponse(
-            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+            'http://localhost:80/v1/users/login',  status_code=status.HTTP_302_FOUND)
     else:
         check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
         check = check.__dict__
@@ -92,7 +92,7 @@ async def update_status(student , way_point , quantity ,new_status ,status_autho
 async def main(request: Request,response: Response):
     if CookieId is None:
         response =  RedirectResponse(
-            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+            'http://localhost:80/v1/users/login',  status_code=status.HTTP_302_FOUND)
     else:
         check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
         check = check.__dict__
@@ -111,7 +111,7 @@ async def main(request: Request,response: Response):
 async def get_dopusk(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)) -> Any:
     if CookieId is None:
         response =  RedirectResponse(
-            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+            'http://localhost:80/v1/users/login',  status_code=status.HTTP_302_FOUND)
     else:
         check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
         check = check.__dict__
@@ -135,7 +135,7 @@ async def get_dopusk(request: Request,response: Response,CookieId: Optional[str]
 async def get_status(request: Request,response: Response,CookieId: Optional[str] = Cookie(None)):
     if CookieId is None:
         response =  RedirectResponse(
-            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+            'http://localhost:80/v1/users/login',  status_code=status.HTTP_302_FOUND)
     else:
         check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
         check = check.__dict__
