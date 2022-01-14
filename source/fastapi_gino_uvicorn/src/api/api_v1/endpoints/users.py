@@ -151,9 +151,7 @@ async def login(email = Form(...),password = Form(...),CookieId: Optional[str] =
         check : ORMUser = await ORMUser.check_password(email,password)
         username = email
         if check is True:
-            content = {"message": "Come to the dark side, we have cookies"}
             value = str(uuid4()).replace('-', '')
-            response = JSONResponse(content=content)
             add_cookies : ORMCookies = await ORMCookies.get_or_create(userId=username,value=value)
             print(add_cookies.__dict__)
             response =  RedirectResponse(
