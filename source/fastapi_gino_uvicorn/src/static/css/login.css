@@ -63,7 +63,16 @@ input {
   font-size: 19px;
   background-color: rgba(124, 160, 251, 1);
   align-self: stretch;
+  cursor: pointer;
 }
+.button:hover{
+ background: rgba(97,138,217,1);
+}
+.button:active{
+  background: rgba(59,89,171,1);
+  color:white;
+}
+
 .icon_cancel {
   width: 30px;
   height: 30px;
