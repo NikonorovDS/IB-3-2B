@@ -134,16 +134,8 @@ async def main(request: Request, response: Response, id: str):
 async def main(request: Request, response: Response, id: str):
     #id- id Допуска который нужен нам для редактирования
     # Нужно вытаскивать допуск по id
-    spravka={
-    "__values__": {
-      "id": 1,
-      "student": "1",
-      "way_point": "smi2",
-      "status_author": "-",
-      "quantity": 123,
-      "status": "Получено"
-    },
-    "__profile__": 'null'}
+    spravka: ORMSpravka_submissions = await ORMSpravka_submissions.get(int(id))
+    spravka = spravka.__dict__
     return templates.TemplateResponse('edit_spravka.html',{"request":request, "spravka":spravka, "id":id})
 
 @router.post('/edit_spravka/{id}',response_class=HTMLResponse )

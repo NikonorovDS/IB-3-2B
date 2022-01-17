@@ -21,12 +21,24 @@
     <form action="http://localhost:80/v1/submissions/get_my_spravka" method="get">
       <button class="button1">Назад</button>
     </form>
-      {% for items in spravka.values()%}
-      <div class="case_item">{{items.student}}</div>
-      <div class="case_item">{{items.way_point}}</div>
-      <div class="case_item">{{items.quantity}}</div>
-      <div class="case_item">{{items.status}}</div>
-      {% endfor %}
+    <table>
+      <tr>
+        <th>ФИО</th>
+        <th>Место назначения</th>
+        <th>Количество</th>
+        <th>Статус</th>
+      </tr>
+    {% if spravka!={} %}
+    {% for items in spravka.values() %}
+      <tr>
+        <td>{{items.student}}</td>
+        <td>{{items.way_point}}</td>
+        <td>{{items.quantity}}</td>
+        <td>{{items.status}}</td>
+      </tr>
+    {% endfor %}
+    {% endif %}
+    </table>
       <form action="http://localhost:80/v1/submissions/edit_spravka/{{id}}"  method="post">
       <div class="">
         <select class="select" name="new_status">

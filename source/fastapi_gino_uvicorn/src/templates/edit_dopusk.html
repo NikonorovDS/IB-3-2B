@@ -20,13 +20,26 @@
   <div class="case">
     <form action="http://localhost:80/v1/submissions/get_my_dopusk" method="get">
       <button class="button1">Назад</button>
-    </form>
-      {% for items in dopusk.values()%}
-      <div class="case_item">{{items.student}}</div>
-      <div class="case_item">{{items.teacher}}</div>
-      <div class="case_item">{{items.subject}}</div>
-      <div class="case_item">{{items.status}}</div>
+      <table>
+        <tr>
+          <th>ФИО</th>
+          <th>Препод</th>
+          <th>Предмет</th>
+          <th>Семестр</th>
+          <th>Статус</th>
+        </tr>
+      {% if dopusk!={} %}
+      {% for items in dopusk.values() %}
+        <tr>
+          <td>{{items.student}}</td>
+          <td>{{items.teacher}}</td>
+          <td>{{items.subject}}</td>
+          <td>{{items.semestr}}</td>
+          <td>{{items.status}}</td>
+        </tr>
       {% endfor %}
+      {% endif %}
+      </table>
       <form action="http://localhost:80/v1/submissions/edit_dopusk/{{id}}"  method="post">
       <div class="">
         <select class="select" name="new_status">
