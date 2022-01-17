@@ -25,6 +25,8 @@ db : Gino = Gino(dsn=settings.get_postgres_dsn())
 
 db.init_app(app)
 
+
+
 # @app.middleware("http")
 # async def check_cookies(request:Request,call_next):
 #     cookie_token: str = request.cookies.get("CookieId")

@@ -69,7 +69,11 @@ class User(db.Model) :
     @classmethod
     async def get_user_for_email(cls,email) -> "User":
         user = await cls.query.where(User.email == email).gino.first()
-        return user 
+        if user is not None:
+
+            return user
+        else:
+            return None 
     @classmethod 
     async def get_name(cls,email) -> "User":
         user = await cls.query.where(User.email == email).gino.first()

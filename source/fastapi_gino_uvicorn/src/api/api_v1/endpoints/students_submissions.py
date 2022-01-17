@@ -32,6 +32,24 @@ router = APIRouter()
 
 
 templates = Jinja2Templates(directory="./templates")
+
+@router.get('/create_spravka',response_class=HTMLResponse )
+async def main(request: Request,response: Response):
+    return templates.TemplateResponse('create_spravka.html',{"request":request})
+
+@router.get('/create_dopusk',response_class=HTMLResponse )
+async def main(request: Request,response: Response):
+    return templates.TemplateResponse('create_dopusk.html',{"request":request})
+
+@router.get('/create_dopusk_accept',response_class=HTMLResponse )
+async def main(request: Request,response: Response):
+    return templates.TemplateResponse('create_dopusk_accept.html',{"request":request})
+
+@router.get('/create_spravka_accept',response_class=HTMLResponse )
+async def main(request: Request,response: Response):
+    return templates.TemplateResponse('create_spravka_accept.html',{"request":request})
+
+
 @router.post('/dopusk')
 async def create_dopusk(CookieId: Optional[str] = Cookie(None), teacher =Form(...), subject = Form(...),status_author="-",semestr = Form(...)) -> Any:
     request= Request
@@ -47,7 +65,7 @@ async def create_dopusk(CookieId: Optional[str] = Cookie(None), teacher =Form(..
         student = str(student)
         student = await ORMUser.get_name(email = student)
         submission = await ORMDopusk_submissions.get_or_create_dopusk(student,subject,teacher,status_author,int(semestr))
-        response =  RedirectResponse('http://localhost/v1/users/create_dopusk_accept',  status_code=status.HTTP_302_FOUND)
+        response =  RedirectResponse('http://localhost/v1/submissions/create_dopusk_accept',  status_code=status.HTTP_302_FOUND)
         return response
 
 @router.post('/spravka')
@@ -65,7 +83,7 @@ async def create_spravka(CookieId: Optional[str] = Cookie(None),way_point=Form(.
         student = str(student)
         student = await ORMUser.get_name(email = student)
         submission = await ORMSpravka_submissions.get_or_create_spravka(student,way_point,int(quantity),'-')
-        response =  RedirectResponse('http://localhost/v1/users/create_spravka_accept',  status_code=status.HTTP_302_FOUND)
+        response =  RedirectResponse('http://localhost/v1/submissions/create_spravka_accept',  status_code=status.HTTP_302_FOUND)
         return response
 
 @router.get("/get_dopusk")

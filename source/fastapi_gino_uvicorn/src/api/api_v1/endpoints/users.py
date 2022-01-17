@@ -29,15 +29,24 @@ templates = Jinja2Templates(directory="./templates")
 
 import hashlib
 
+@router.get("/create_admin")
+async def create_admin() -> Any:
+    admin: ORMUser = await ORMUser.get_user_for_email(email = "admin")
+    #return admin.__dict__
+    if admin is None:
+      
+        create_admin: ORMUser = await ORMUser.create_user(login="admin",email="admin",phone="admin",role="admin",name="admin",admission_year="admin",course=1,direction="admin",group='admin',hostel='admin',password='admin',zachetkaid="admin")
+        return admin
+    else:
+        return
 
-
-@router.get("/cookies")
-async def read_cookies() -> Any:
-    cookies = await ORMCookies.query.gino.all()
-    return cookies
-@router.get("/cookies/delete")
-async def delete_cookies()  -> Any:
-    return await ORMCookies.delete_not_valid_token()
+# @router.get("/cookies")
+# async def read_cookies() -> Any:
+#     cookies = await ORMCookies.query.gino.all()
+#     return cookies
+# @router.get("/cookies/delete")
+# async def delete_cookies()  -> Any:
+#     return await ORMCookies.delete_not_valid_token()
 @router.get('/', response_model=List[User])
 async def read_users(
     skip: int = 0,
@@ -91,21 +100,7 @@ async def useradd_admin(request: Request,response: Response,CookieId: Optional[s
             return '404'
 
 
-@router.get('/create_spravka',response_class=HTMLResponse )
-async def main(request: Request,response: Response):
-    return templates.TemplateResponse('create_spravka.html',{"request":request})
 
-@router.get('/create_dopusk',response_class=HTMLResponse )
-async def main(request: Request,response: Response):
-    return templates.TemplateResponse('create_dopusk.html',{"request":request})
-
-@router.get('/create_dopusk_accept',response_class=HTMLResponse )
-async def main(request: Request,response: Response):
-    return templates.TemplateResponse('create_dopusk_accept.html',{"request":request})
-
-@router.get('/create_spravka_accept',response_class=HTMLResponse )
-async def main(request: Request,response: Response):
-    return templates.TemplateResponse('create_spravka_accept.html',{"request":request})
 
 
 
@@ -180,19 +175,19 @@ async def desauth(request: Request,response: Response,CookieId: Optional[str] = 
 
 
 
-@router.get('/login_test/{username}')
-async def test_login(username: str,password:str ,response: Request)-> Any:
-    check : ORMUser = await ORMUser.check_password(email=username,password=password)
-    if check is True:
-        value = str(uuid4()).replace('-', '')
-        content= 'yess'
-        response = JSONResponse(content=content)
-        add_cookies : ORMCookies(userId=username,value=value)
-        response.set_cookie(key="CookieId",value=value)
+# @router.get('/login_test/{username}')
+# async def test_login(username: str,password:str ,response: Request)-> Any:
+#     check : ORMUser = await ORMUser.check_password(email=username,password=password)
+#     if check is True:
+#         value = str(uuid4()).replace('-', '')
+#         content= 'yess'
+#         response = JSONResponse(content=content)
+#         add_cookies : ORMCookies(userId=username,value=value)
+#         response.set_cookie(key="CookieId",value=value)
 
-        return response
-    else:
-        return requests.get("http://localhost:80/v1/users/start")
+#         return response
+#     else:
+#         return requests.get("http://localhost:80/v1/users/start")
 
 @router.get('/test_working')
 async def read_cookies(CookieId: Optional[str] = Cookie(None)) -> Any:
@@ -206,29 +201,31 @@ async def read_cookies(CookieId: Optional[str] = Cookie(None)) -> Any:
 @router.post('/create_user')
 async def create_user(login = Form(...),email = Form(...),phone = Form(...), role = Form(...),name = Form(...),admission_year = Form(...),
     course = Form(...),direction = Form(...),group =Form(...),hostel = Form(...),password = Form(...),zachetkaid=Form(...),CookieId: Optional[str] = Cookie(None)) -> Any:
-    new_user : ORMUser = await ORMUser.create_user(login,email,phone,role,name,admission_year,int(course),direction,group,hostel,password,zachetkaid)
-#    """
-#    Create user
-#    """
-#    response= Response
-#    if CookieId is None:
-#        response =  RedirectResponse(
-#            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
-#        return response
-#    else:
-#        check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
-#        check = check.__dict__
-#        value = check["__values__"]
-#        userId = value['userId']
-#        role : ORMUser = await ORMUser.get_role(username = userId)
-#        if role == 'admin':
-#            new_user : ORMUser = await ORMUser.create_user(login,email,phone,role,name,admission_year,course,direction,group,hostel,password)
+    #new_user : ORMUser = await ORMUser.create_user(login,email,phone,role,name,admission_year,int(course),direction,group,hostel,password,zachetkaid)
+  
+    response= Response
+    if CookieId is None:
+        response =  RedirectResponse(
+            'http://localhost:80/v1/users/start',  status_code=status.HTTP_302_FOUND)
+        return response
+    else:
+        check : ORMCookies = await ORMCookies.get_cookie(value=CookieId)
+        if check == 504:
+            return RedirectResponse(
+             'http://localhost:80/v1/users/main',  status_code=status.HTTP_302_FOUND)
+        check = check.__dict__
+        value = check["__values__"]
+        userId = value['userId']
+        role_user : ORMUser = await ORMUser.get_role(username = userId)
+        if role_user == 'admin':
+            new_user : ORMUser = await ORMUser.create_user(login,email,phone,role,name,admission_year,int(course),direction,group,hostel,password,zachetkaid)
 
 
-#            return RedirectResponse(
-#            'http://localhost:80/v1/users/main_admin',  status_code=status.HTTP_302_FOUND)
-#        else:
-#            return '404'
+            return RedirectResponse(
+             'http://localhost:80/v1/users/main',  status_code=status.HTTP_302_FOUND)
+        else:
+            return RedirectResponse(
+             'http://localhost:80/v1/users/main',  status_code=status.HTTP_302_FOUND)
 
 
 
